@@ -1,0 +1,35 @@
+using UnityEngine;
+using SwapPuzzle.Interfaces;
+
+namespace SwapPuzzle.MonoBehaviors
+{
+    public class PuzzlePiece : MonoBehaviour, IPuzzlePiece
+    {
+        public int OriginalX { get; private set; }
+        public int OriginalY { get; private set; }
+        public int CurrentX { get; set; }
+        public int CurrentY { get; set; }
+        public bool IsSolved { get; private set; }
+        public bool IsLocked { get; private set; }
+
+        public void Initialize(IPuzzlePiece pieceData) {
+
+        }
+
+        public void SetPosition(int x, int y) {
+
+        }
+
+        public void MarkAsSolved() {
+
+        }
+
+        public void LockPiece() {
+
+        }
+
+        public void OnPieceSelected() {
+
+        }
+    }
+}
