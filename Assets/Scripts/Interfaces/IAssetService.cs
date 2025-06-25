@@ -6,7 +6,7 @@ namespace SwapPuzzle.Interfaces
     /// <summary>
     /// Manages art assets and their loading/unloading
     /// </summary>
-    public interface IAssetManager
+    public interface IAssetService
     {
         ILevelData GetLevelData(int levelId);
 

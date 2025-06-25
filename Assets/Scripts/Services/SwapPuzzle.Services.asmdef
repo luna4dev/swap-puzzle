@@ -1,11 +1,11 @@
 {
-    "name": "SwapPuzzle.MonoBehaviors",
+    "name": "SwapPuzzle.Services",
     "rootNamespace": "",
     "references": [
         "GUID:712969a6faac247e7a71336e6ddad191",
+        "GUID:9e24947de15b9834991c9d8411ea37cf",
         "GUID:69f507debfb9240e89ad9c018a10e2c7",
-        "GUID:399c263d39abe41e49106b1af82b0c8f",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+        "GUID:84651a3751eca9349aac36a66bba901b"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

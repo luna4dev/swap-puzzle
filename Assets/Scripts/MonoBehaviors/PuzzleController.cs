@@ -1,5 +1,6 @@
 using UnityEngine;
 using SwapPuzzle.Interfaces;
+using SwapPuzzle.Services;
 
 namespace SwapPuzzle.MonoBehaviors
 {
@@ -10,9 +11,9 @@ namespace SwapPuzzle.MonoBehaviors
             Debug.Log("Dev Stage: using mock data");
 
             // Request the art asset manager to generate the puzzle pieces
-            var assetManager = AssetManager.Instance;
-            ILevelData levelData = assetManager.GetLevelData(levelId);
-            var puzzlePieces = assetManager.GeneratePuzzlePieces(levelData.Illustration, levelData.GridSize);
+            var assetService = AssetService.Instance;
+            ILevelData levelData = assetService.GetLevelData(levelId);
+            var puzzlePieces = assetService.GeneratePuzzlePieces(levelData.Illustration, levelData.GridSize);
 
             // Initialize the puzzle pieces
             foreach (var piece in puzzlePieces)

@@ -3,28 +3,39 @@ using SwapPuzzle.Interfaces;
 using UnityEngine.AddressableAssets;
 using System.Collections.Generic;
 
-namespace SwapPuzzle.MonoBehaviors
+namespace SwapPuzzle.Services
 {
-    public enum EAssetType{
+    public enum EAssetType
+    {
         Level,
         Illustration,
         Prefab,
     }
 
-    public class AssetManager : MonoBehaviour, IAssetManager
+    public class AssetService : IAssetService
     {
-        public static AssetManager Instance { get; private set; } = null;
-
-        void Awake()
+        private static AssetService _instance = null;
+        public static AssetService Instance
         {
-            if (Instance == null)
+            get
             {
-                Instance = this;
+                if (_instance == null)
+                {
+                    _instance = new AssetService();
+                }
+                return _instance;
             }
-            else
+        }
+
+        private T LoadAsset<T>(string path) where T: UnityEngine.Object {
+            var locations = Addressables.LoadResourceLocationsAsync(path).WaitForCompletion();
+            if (locations.Count == 0)
             {
-                Destroy(gameObject);
+                return default;
             }
+            var request = Addressables.LoadAssetAsync<T>(path);
+            request.WaitForCompletion();
+            return request.Result;
         }
 
         public ILevelData GetLevelData(int levelId)
@@ -32,19 +43,15 @@ namespace SwapPuzzle.MonoBehaviors
             return null;
         }
 
+        public GameObject GetPrefab(string prefabName) {
+            string path = ResolveAssetPath(EAssetType.Prefab, prefabName);
+            return LoadAsset<GameObject>(path); 
+        }
+
         public Texture2D GetIllustration(int illustrationId)
         {
             string path = ResolveIllustrationAssetPath(illustrationId);
-            var locations = Addressables.LoadResourceLocationsAsync(path).WaitForCompletion();
-            if (locations.Count == 0)
-            {
-                Debug.LogWarning(path + " - doesn't exists");
-                return null;
-            }
-            // 주소가 존재하면 로드
-            var request = Addressables.LoadAssetAsync<Texture2D>(path);
-            request.WaitForCompletion();
-            return request.Result;
+            return LoadAsset<Texture2D>(path);
         }
 
         public List<Sprite> GeneratePuzzlePieces(Texture2D illustration, int gridSize)
