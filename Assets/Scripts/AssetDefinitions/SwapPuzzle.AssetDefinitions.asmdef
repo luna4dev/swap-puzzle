@@ -1,0 +1,16 @@
+{
+    "name": "SwapPuzzle.AssetDefinitions",
+    "rootNamespace": "",
+    "references": [
+        "GUID:712969a6faac247e7a71336e6ddad191"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

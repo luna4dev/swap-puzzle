@@ -1,0 +1,18 @@
+{
+    "name": "SwapPuzzle.Editors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3b65606d55e554372ac037d78989022f",
+        "GUID:712969a6faac247e7a71336e6ddad191",
+        "GUID:69f507debfb9240e89ad9c018a10e2c7"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
