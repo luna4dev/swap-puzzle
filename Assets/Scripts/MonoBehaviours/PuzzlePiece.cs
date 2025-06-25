@@ -2,7 +2,7 @@ using UnityEngine;
 using SwapPuzzle.Interfaces;
 using UnityEngine.EventSystems;
 
-namespace SwapPuzzle.MonoBehaviors
+namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzlePiece : MonoBehaviour, IPuzzlePiece, IDragHandler, IBeginDragHandler, IEndDragHandler
     {

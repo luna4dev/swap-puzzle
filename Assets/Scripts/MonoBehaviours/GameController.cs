@@ -1,7 +1,7 @@
 using UnityEngine;
 using SwapPuzzle.Interfaces;
 
-namespace SwapPuzzle.MonoBehaviors
+namespace SwapPuzzle.MonoBehaviours
 {
     public class GameController : MonoBehaviour, IGameController
     {

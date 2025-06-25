@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-using SwapPuzzle.MonoBehaviors;
+using SwapPuzzle.MonoBehaviours;
 
 [CustomEditor(typeof(GridItem))]
 public class GridItemEditor : Editor {

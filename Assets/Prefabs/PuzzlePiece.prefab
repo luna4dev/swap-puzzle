@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 1248740313043758620}
   - component: {fileID: 8020163406226582260}
   m_Layer: 5
-  m_Name: GridItem
+  m_Name: PuzzlePiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

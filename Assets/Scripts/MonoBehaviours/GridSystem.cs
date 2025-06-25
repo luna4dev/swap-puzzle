@@ -2,7 +2,7 @@ using UnityEngine;
 using SwapPuzzle.Interfaces;
 using SwapPuzzle.Services;
 
-namespace SwapPuzzle.MonoBehaviors
+namespace SwapPuzzle.MonoBehaviours
 {
     public class GridSystem : MonoBehaviour, IGridSystem
     {
@@ -54,12 +54,12 @@ namespace SwapPuzzle.MonoBehaviors
             int diff = newGridItemCount - existingGridItemCount;
             if (diff > 0)
             {
-                GameObject gridItemPrefab = AssetService.Instance.GetPrefab("GridItem");
-                gridItemPrefab.SetActive(false); // set inactive to avoid instantiation error
+                GameObject puzzlePiecePrefab = AssetService.Instance.GetPrefab("PuzzlePiece");
+                puzzlePiecePrefab.SetActive(false); // set inactive to avoid instantiation error
 
                 for (int i = 0; i < diff; i++)
                 {
-                    Instantiate(gridItemPrefab, transform);
+                    Instantiate(puzzlePiecePrefab, transform);
                 }
             }
             else if (diff < 0)

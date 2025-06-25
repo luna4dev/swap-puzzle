@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-namespace SwapPuzzle.MonoBehaviors
+namespace SwapPuzzle.MonoBehaviours
 {
     public class GridItem : MonoBehaviour
     {

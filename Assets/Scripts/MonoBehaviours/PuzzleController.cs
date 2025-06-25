@@ -2,7 +2,7 @@ using UnityEngine;
 using SwapPuzzle.Interfaces;
 using SwapPuzzle.Services;
 
-namespace SwapPuzzle.MonoBehaviors
+namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {

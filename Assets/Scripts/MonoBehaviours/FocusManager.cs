@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-namespace SwapPuzzle.MonoBehaviors
+namespace SwapPuzzle.MonoBehaviours
 {
     public class FocusManager : MonoBehaviour
     {
