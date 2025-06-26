@@ -15,13 +15,8 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: dd3792de297234ee3a5a9e964eaa075a
   m_SerializeEntries:
-  - m_GUID: 6fd16856603e2964b98a45e683e4312d
-    m_Address: Assets/Sprites/Illustrations/999.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 71f82daf2c9b9495e92831af759bae2a
-    m_Address: Assets/Levels
+  - m_GUID: 34e0a82f618ee4fe99adf3fe2d415250
+    m_Address: Assets/Data
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

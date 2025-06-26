@@ -6,6 +6,7 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class GridItem : MonoBehaviour
     {
+        public int GridId { get; private set; }
         public int X { get; private set; }
         public int Y { get; private set; }
         [SerializeField] private GridSystem _gridSystem;
@@ -21,9 +22,10 @@ namespace SwapPuzzle.MonoBehaviours
             if (_gridSystem != null) _gridSystem.OnGridSizeChanged -= OnGridSizeChanged;
         }
 
-        public void Initialize(GridSystem gridSystem, int x, int y)
+        public void Initialize(GridSystem gridSystem, int gridId, int x, int y)
         {
             _gridSystem = gridSystem;
+            GridId = gridId;
             X = x;
             Y = y;
         }
@@ -60,6 +62,26 @@ namespace SwapPuzzle.MonoBehaviours
             rectTransform.anchorMax = new(0, 1);
             rectTransform.anchoredPosition = _gridSystem.GetTopLeftAnchorPositionFromLogicalCell(x, y);
             rectTransform.localScale = new(1, 1, 1);
+        }
+
+        public void SetPosition(Vector2Int cell) {
+            SetPosition(cell.x, cell.y);
+        }
+
+        // TODO: remove
+        public void TestSwap()
+        {
+            GridItem droppedGridItem = UIDragDrop.Dropped.gameObject.GetComponent<GridItem>();
+            GridItem targetGridItem = UIDragDrop.DroppedTarget.gameObject.GetComponent<GridItem>();
+
+            Debug.Log("Dropped: " + droppedGridItem.GridId);
+            Debug.Log("Target: " + targetGridItem.GridId);
+
+            Vector2Int droppedCell = new(droppedGridItem.X, droppedGridItem.Y);
+            Vector2Int targetCell = new(targetGridItem.X, targetGridItem.Y);
+
+            droppedGridItem.SetPosition(targetCell); 
+            targetGridItem.SetPosition(droppedCell);
         }
     }
 }

@@ -62,13 +62,11 @@ namespace SwapPuzzle.MonoBehaviours
                     Instantiate(puzzlePiecePrefab, transform);
                 }
             }
-            else if (diff < 0)
+
+            // first turn off all child
+            foreach (Transform child in transform)
             {
-                for (int i = 0; i < -diff; i++)
-                {
-                    // set active false
-                    transform.GetChild(i).gameObject.SetActive(false);
-                }
+                child.gameObject.SetActive(false);
             }
 
             // set grid item position and size
@@ -82,7 +80,7 @@ namespace SwapPuzzle.MonoBehaviours
                     rectTransform.sizeDelta = new Vector2(GridSize, GridSize);
 
                     GridItem gridItem = child.GetComponent<GridItem>();
-                    gridItem.Initialize(this, i, j);
+                    gridItem.Initialize(this, GetGridNumberFromLogicalCell(i, j), i, j);
                     gridItem.SetPosition(i, j);
                     gridItem.SetDebug(true, GetGridNumberFromLogicalCell(i, j));
                     gridItem.gameObject.SetActive(true);
@@ -140,5 +138,6 @@ namespace SwapPuzzle.MonoBehaviours
                 -GridSize * (y + 0.5f)
             );
         }
+
     }
 }

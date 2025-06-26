@@ -4,23 +4,28 @@ using SwapPuzzle.Services;
 
 namespace SwapPuzzle.MonoBehaviours
 {
+    [RequireComponent(typeof(GridSystem))]
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {
+        private GridSystem _gridSystem;
+        public GridSystem GridSystem
+        {
+            get
+            {
+                if (_gridSystem == null) _gridSystem = GetComponent<GridSystem>();
+                return _gridSystem;
+            }
+        }
+
         public void InitializePuzzle(int levelId)
         {
-            Debug.Log("Dev Stage: using mock data");
+            // TODO: remove mockup
+            
 
-            // Request the art asset manager to generate the puzzle pieces
-            var assetService = AssetService.Instance;
-            ILevelData levelData = assetService.GetLevelData(levelId);
-            var puzzlePieces = assetService.GeneratePuzzlePieces(levelData.Illustration, levelData.GridSize);
+        }
 
-            // Initialize the puzzle pieces
-            foreach (var piece in puzzlePieces)
-            {
-                var puzzlePiece = Instantiate(piece, transform);
-            }
-
+        public void SwapPieces(PuzzlePiece a, PuzzlePiece b) {
+            
         }
 
         public void ShufflePieces()
