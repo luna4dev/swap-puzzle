@@ -74,9 +74,6 @@ namespace SwapPuzzle.MonoBehaviours
             GridItem droppedGridItem = UIDragDrop.Dropped.gameObject.GetComponent<GridItem>();
             GridItem targetGridItem = UIDragDrop.DroppedTarget.gameObject.GetComponent<GridItem>();
 
-            Debug.Log("Dropped: " + droppedGridItem.GridId);
-            Debug.Log("Target: " + targetGridItem.GridId);
-
             Vector2Int droppedCell = new(droppedGridItem.X, droppedGridItem.Y);
             Vector2Int targetCell = new(targetGridItem.X, targetGridItem.Y);
 

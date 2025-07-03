@@ -20,8 +20,11 @@ namespace SwapPuzzle.MonoBehaviours
 
         private Vector2 _originalPosition;
         private Transform _originalParent;
+        private Vector2 _originalAnchorMin;
+        private Vector2 _originalAnchorMax;
         private int _originalSiblingIndex;
         private RectTransform _rectTransform;
+        private Vector2 _dragOffset;
 
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -31,21 +34,48 @@ namespace SwapPuzzle.MonoBehaviours
             _originalParent = transform.parent;
             _originalSiblingIndex = transform.GetSiblingIndex();
 
+            // Calculate offset from pointer to object center
+            Vector2 localPointerPosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                _rectTransform,
+                eventData.position,
+                eventData.pressEventCamera,
+                out localPointerPosition);
+            _dragOffset = localPointerPosition;
+
+            _originalAnchorMin = _rectTransform.anchorMin;
+            _originalAnchorMax = _rectTransform.anchorMax;
+            _rectTransform.anchorMin = new(0.5f, 0.5f);
+            _rectTransform.anchorMax = new(0.5f, 0.5f);
+
             transform.SetParent(UIDragRoot.Instance.transform);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            Vector2 newPos = new(_rectTransform.localPosition.x + eventData.delta.x, _rectTransform.localPosition.y + eventData.delta.y);
-            _rectTransform.localPosition = newPos;
+            Vector2 localPointerPosition;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                UIDragRoot.Instance.RectTransform,
+                eventData.position,
+                eventData.pressEventCamera,
+                out localPointerPosition))
+            {
+                // Account for the drag offset so object doesn't snap to pointer
+                _rectTransform.anchoredPosition = localPointerPosition - _dragOffset;
+            }
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (!_rectTransform) _rectTransform = GetComponent<RectTransform>();
+
             // rollback position
             transform.position = _originalPosition;
             transform.SetParent(_originalParent);
             transform.SetSiblingIndex(_originalSiblingIndex);
+
+            _rectTransform.anchorMin = _originalAnchorMin;
+            _rectTransform.anchorMax = _originalAnchorMax;
 
             UIDragDrop target = RaycastDrop(eventData);
             if (target == null) return;
