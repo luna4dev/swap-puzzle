@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 using SwapPuzzle.MonoBehaviours;
@@ -27,3 +28,4 @@ public class GridSystemEditor : Editor {
         }
     }
 }
+#endif
