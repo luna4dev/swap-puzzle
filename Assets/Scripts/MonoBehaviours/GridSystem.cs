@@ -54,13 +54,25 @@ namespace SwapPuzzle.MonoBehaviours
             int diff = newGridItemCount - existingGridItemCount;
             if (diff > 0)
             {
-                GameObject puzzlePiecePrefab = AssetService.Instance.GetPrefab("PuzzlePiece");
-                puzzlePiecePrefab.SetActive(false); // set inactive to avoid instantiation error
-
-                for (int i = 0; i < diff; i++)
+                AssetService.Instance.GetPrefab("PuzzlePiece", (puzzlePiecePrefab, error) =>
                 {
-                    Instantiate(puzzlePiecePrefab, transform);
-                }
+                    if (error != null)
+                    {
+                        Debug.LogError(error);
+                        return;
+                    }
+                    InstializeGridItemsAsync(puzzlePiecePrefab, newGridItemCount, pieceCountPerRow);
+                });
+            }
+        }
+
+        private void InstializeGridItemsAsync(GameObject puzzlePiecePrefab, int newGridItemCount, int pieceCountPerRow)
+        {
+            puzzlePiecePrefab.SetActive(false);
+
+            for (int i = 0; i < newGridItemCount; i++)
+            {
+                Instantiate(puzzlePiecePrefab, transform);
             }
 
             // first turn off all child
@@ -87,6 +99,7 @@ namespace SwapPuzzle.MonoBehaviours
                 }
             }
         }
+
 
         /// <summary>
         /// Set piece count per row and calculate grid size

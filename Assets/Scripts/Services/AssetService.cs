@@ -2,6 +2,9 @@ using UnityEngine;
 using SwapPuzzle.Interfaces;
 using UnityEngine.AddressableAssets;
 using System.Collections.Generic;
+using UnityEngine.Events;
+using System;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace SwapPuzzle.Services
 {
@@ -27,15 +30,14 @@ namespace SwapPuzzle.Services
             }
         }
 
-        private T LoadAsset<T>(string path) where T: UnityEngine.Object {
-            var locations = Addressables.LoadResourceLocationsAsync(path).WaitForCompletion();
-            if (locations.Count == 0)
-            {
-                return default;
-            }
-            var request = Addressables.LoadAssetAsync<T>(path);
-            request.WaitForCompletion();
-            return request.Result;
+        private void LoadAsset<T>(string path, Action<T, Exception> callback) where T: UnityEngine.Object {
+            Addressables.LoadAssetAsync<T>(path).Completed += (request) => {
+                if (request.Status == AsyncOperationStatus.Succeeded) {
+                    callback(request.Result, null);
+                } else {
+                    callback(null, new Exception("Failed to load asset: " + path));
+                }
+            };
         }
 
         public ILevelData GetLevelData(int levelId)
@@ -43,15 +45,15 @@ namespace SwapPuzzle.Services
             return null;
         }
 
-        public GameObject GetPrefab(string prefabName) {
+        public void GetPrefab(string prefabName, Action<GameObject, Exception> callback) {
             string path = ResolveAssetPath(EAssetType.Prefab, prefabName);
-            return LoadAsset<GameObject>(path); 
+            LoadAsset<GameObject>(path, callback); 
         }
 
-        public Texture2D GetIllustration(int illustrationId)
+        public void GetIllustration(int illustrationId, Action<Texture2D, Exception> callback)
         {
             string path = ResolveIllustrationAssetPath(illustrationId);
-            return LoadAsset<Texture2D>(path);
+            LoadAsset<Texture2D>(path, callback);
         }
 
         public List<Sprite> GeneratePuzzlePieces(Texture2D illustration, int gridSize)

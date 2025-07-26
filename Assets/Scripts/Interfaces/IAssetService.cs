@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace SwapPuzzle.Interfaces
         /// </summary>
         /// <param name="illustrationId">The ID of the illustration</param>
         /// <returns>The illustration texture</returns>
-        Texture2D GetIllustration(int illustrationId);
+        void GetIllustration(int illustrationId, Action<Texture2D, Exception> callback);
 
         /// <summary>
         /// Generates puzzle pieces from an illustration
