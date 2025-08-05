@@ -27,6 +27,7 @@ echo -e "${YELLOW}Project Path: $UNITY_PROJECT_PATH${NC}"
 
 # Create version directory
 VERSION_PATH="$BUILDS_PATH/Version/v$VERSION"
+BUILD_PATH="$VERSION_PATH"
 
 mkdir -p "$VERSION_PATH"
 
@@ -34,23 +35,8 @@ mkdir -p "$VERSION_PATH"
 BUILD_METHOD="BuildScripts.BuildWebGLProduction"
 DEFINES="PRODUCTION_BUILD;UNITY_WEBGL"
 
-# Check if Unity is available
-if ! command -v unity-hub &> /dev/null && ! command -v Unity &> /dev/null; then
-    echo -e "${RED}Error: Unity not found. Please install Unity Hub or Unity CLI.${NC}"
-    exit 1
-fi
-
-# Find Unity executable
-UNITY_EXECUTABLE=""
-if command -v unity-hub &> /dev/null; then
-    # Try to find Unity through Unity Hub
-    UNITY_EXECUTABLE=$(find /Applications -name "Unity" -type f 2>/dev/null | head -n 1)
-fi
-
-if [ -z "$UNITY_EXECUTABLE" ]; then
-    echo -e "${RED}Error: Unity executable not found. Please ensure Unity is installed.${NC}"
-    exit 1
-fi
+# Unity Executable
+UNITY_EXECUTABLE="/Applications/Unity/Hub/Editor/6000.0.28f1/Unity.app/Contents/MacOS/Unity"
 
 echo -e "${BLUE}Using Unity: $UNITY_EXECUTABLE${NC}"
 

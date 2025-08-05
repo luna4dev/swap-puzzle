@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # S3 Deployment Script for Unity WebGL Builds
-# Usage: ./deploy.sh [profile] [version] [bucket-name] [region]
+# Usage: ./deploy.sh [version] [bucket-name] [region]
 # Example: ./deploy.sh production v1.0.0 my-game-bucket us-east-1
 
 set -e
@@ -18,22 +18,17 @@ UNITY_PROJECT_PATH="$(pwd)"
 BUILDS_PATH="$UNITY_PROJECT_PATH/Builds"
 
 # Default values
-PROFILE=${1:-"production"}
-VERSION=${2:-"latest"}
-BUCKET_NAME=${3:-""}
-REGION=${4:-"us-east-1"}
-
-# Validate inputs
-if [[ ! "$PROFILE" =~ ^(development|staging|production)$ ]]; then
-    echo -e "${RED}Error: Invalid profile. Use: development, staging, or production${NC}"
-    exit 1
-fi
+VERSION=${1:-"latest"}
+BUCKET_NAME=${2:-""}
+REGION=${3:-"ap-northeast-1"}
 
 if [ -z "$BUCKET_NAME" ]; then
     echo -e "${RED}Error: S3 bucket name is required${NC}"
-    echo -e "${YELLOW}Usage: ./deploy.sh [profile] [version] [bucket-name] [region]${NC}"
+    echo -e "${YELLOW}Usage: ./deploy.sh [version] [bucket-name] [region]${NC}"
     exit 1
 fi
+
+PROFILE="Production"
 
 echo -e "${BLUE}=== S3 Deployment Script ===${NC}"
 echo -e "${YELLOW}Profile: $PROFILE${NC}"
@@ -51,7 +46,7 @@ fi
 # Check if build exists
 if [ ! -d "$BUILD_PATH" ]; then
     echo -e "${RED}Error: Build not found at $BUILD_PATH${NC}"
-    echo -e "${YELLOW}Please run the build script first: ./build.sh $PROFILE $VERSION${NC}"
+    echo -e "${YELLOW}Please run the build script first: ./build.sh $VERSION${NC}"
     exit 1
 fi
 
@@ -79,17 +74,6 @@ echo -e "${BLUE}Deploying to: s3://$BUCKET_NAME${NC}"
 
 # Create deployment directory structure
 DEPLOY_PATH=""
-case $PROFILE in
-    "development")
-        DEPLOY_PATH="dev"
-        ;;
-    "staging")
-        DEPLOY_PATH="staging"
-        ;;
-    "production")
-        DEPLOY_PATH=""
-        ;;
-esac
 
 # Add version to path if not latest
 if [ "$VERSION" != "latest" ]; then
@@ -152,24 +136,32 @@ aws s3 sync "$BUILD_PATH" "$S3_DESTINATION" \
 echo -e "${BLUE}Setting content types...${NC}"
 
 # Set MIME types for Unity WebGL files
-aws s3 cp "$S3_DESTINATION/Build/Build.data" "$S3_DESTINATION/Build/Build.data" \
+aws s3 cp "$BUILD_PATH/Build/$PROFILE.data.gz" "$S3_DESTINATION/Build/$PROFILE.data.gz" \
     --content-type "application/octet-stream" \
+    --content-encoding "gz" \
     --cache-control "max-age=31536000" \
     --region "$REGION"
 
-aws s3 cp "$S3_DESTINATION/Build/Build.framework.js" "$S3_DESTINATION/Build/Build.framework.js" \
+aws s3 cp "$BUILD_PATH/Build/$PROFILE.framework.js.gz" "$S3_DESTINATION/Build/$PROFILE.framework.js.gz" \
+    --content-type "application/javascript" \
+    --content-encoding "gz" \
+    --cache-control "max-age=31536000" \
+    --region "$REGION"
+
+aws s3 cp "$BUILD_PATH/Build/$PROFILE.loader.js" "$S3_DESTINATION/Build/$PROFILE.loader.js" \
     --content-type "application/javascript" \
     --cache-control "max-age=31536000" \
     --region "$REGION"
 
-aws s3 cp "$S3_DESTINATION/Build/Build.loader.js" "$S3_DESTINATION/Build/Build.loader.js" \
-    --content-type "application/javascript" \
+aws s3 cp "$BUILD_PATH/Build/$PROFILE.wasm.gz" "$S3_DESTINATION/Build/$PROFILE.wasm.gz" \
+    --content-type "application/wasm" \
+    --content-encoding "gz" \
     --cache-control "max-age=31536000" \
     --region "$REGION"
 
 # Set index.html content type
 if [ -f "$BUILD_PATH/index.html" ]; then
-    aws s3 cp "$S3_DESTINATION/index.html" "$S3_DESTINATION/index.html" \
+    aws s3 cp "$BUILD_PATH/index.html" "$S3_DESTINATION/index.html" \
         --content-type "text/html" \
         --cache-control "no-cache" \
         --region "$REGION"

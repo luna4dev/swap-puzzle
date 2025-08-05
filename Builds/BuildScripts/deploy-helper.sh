@@ -22,9 +22,9 @@ show_help() {
     echo "Usage: $0 [command] [options]"
     echo ""
     echo "Commands:"
-    echo "  build [profile] [version]     - Build the project"
-    echo "  deploy [profile] [version]    - Deploy to S3"
-    echo "  build-deploy [profile] [version] - Build and deploy"
+    echo "  build [version]     - Build the project"
+    echo "  deploy [version]    - Deploy to S3"
+    echo "  build-deploy [version] - Build and deploy"
     echo "  list-builds                   - List available builds"
     echo "  list-deployments              - List deployed versions"
     echo "  rollback [version]            - Rollback to specific version"
@@ -33,33 +33,29 @@ show_help() {
     echo "  config                        - Show current configuration"
     echo "  help                          - Show this help"
     echo ""
-    echo "Profiles: development, staging, production"
     echo "Version: optional, defaults to timestamp"
 }
 
 build_project() {
-    local profile=${1:-"development"}
-    local version=${2:-$(date +"$VERSION_FORMAT")}
+    local version=${1:-$(date +"$VERSION_FORMAT")}
     
     echo -e "${BLUE}Building project...${NC}"
-    "$SCRIPT_DIR/build.sh" "$profile" "$version"
+    "$SCRIPT_DIR/build.sh" "$version"
 }
 
 deploy_project() {
-    local profile=${1:-"production"}
-    local version=${2:-"latest"}
+    local version=${1:-"latest"}
     
     echo -e "${BLUE}Deploying project...${NC}"
-    "$SCRIPT_DIR/deploy.sh" "$profile" "$version" "$S3_BUCKET_NAME" "$S3_REGION"
+    "$SCRIPT_DIR/deploy.sh" "$version" "$S3_BUCKET_NAME" "$S3_REGION"
 }
 
 build_and_deploy() {
-    local profile=${1:-"production"}
-    local version=${2:-$(date +"$VERSION_FORMAT")}
+    local version=${1:-$(date +"$VERSION_FORMAT")}
     
     echo -e "${BLUE}Building and deploying...${NC}"
-    build_project "$profile" "$version"
-    deploy_project "$profile" "$version"
+    build_project "$version"
+    deploy_project "$version"
 }
 
 list_builds() {

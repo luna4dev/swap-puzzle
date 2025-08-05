@@ -7,20 +7,8 @@ using UnityEditor.Build;
 
 public class BuildScripts
 {
-    [MenuItem("Build/Build WebGL Development")]
-    public static void BuildWebGLDevelopment()
-    {
-        BuildWebGL("Development", BuildOptions.Development);
-    }
-
-    [MenuItem("Build/Build WebGL Staging")]
-    public static void BuildWebGLStaging()
-    {
-        BuildWebGL("Staging", BuildOptions.None);
-    }
-
-    [MenuItem("Build/Build WebGL Production")]
-    public static void BuildWebGLProduction()
+    [MenuItem("Build/Build WebGL")]
+    public static void BuildWebGL()
     {
         BuildWebGL("Production", BuildOptions.None);
     }
@@ -126,14 +114,6 @@ public class BuildScripts
         // Set WebGL memory size based on profile
         switch (profile.ToLower())
         {
-            case "development":
-                PlayerSettings.WebGL.memorySize = 512; // Larger for development
-                PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
-                break;
-            case "staging":
-                PlayerSettings.WebGL.memorySize = 256;
-                PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
-                break;
             case "production":
                 PlayerSettings.WebGL.memorySize = 256;
                 PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
@@ -148,12 +128,6 @@ public class BuildScripts
         // Set quality settings based on profile
         switch (profile.ToLower())
         {
-            case "development":
-                QualitySettings.SetQualityLevel(0); // Fastest
-                break;
-            case "staging":
-                QualitySettings.SetQualityLevel(1); // Fast
-                break;
             case "production":
                 QualitySettings.SetQualityLevel(2); // Good
                 break;

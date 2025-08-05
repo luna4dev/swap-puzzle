@@ -4,21 +4,15 @@
 # Copy this file to config.local.sh and modify the values
 
 # AWS Configuration
-export AWS_DEFAULT_REGION="us-east-1"
+export AWS_DEFAULT_REGION="ap-northeast-1"
 export AWS_PROFILE="default"  # Change to your AWS profile if needed
 
 # S3 Bucket Configuration
-export S3_BUCKET_NAME="your-game-bucket-name"
-export S3_REGION="us-east-1"
+export S3_BUCKET_NAME="luna4-games-swapp"
+export S3_REGION="ap-northeast-1"
 
 # CloudFront Configuration (optional)
-export CLOUDFRONT_DISTRIBUTION_ID=""
-export CLOUDFRONT_DOMAIN=""
-
-# Deployment URLs
-export PRODUCTION_URL="https://your-game-bucket-name.s3.us-east-1.amazonaws.com"
-export STAGING_URL="https://your-game-bucket-name.s3.us-east-1.amazonaws.com/staging"
-export DEVELOPMENT_URL="https://your-game-bucket-name.s3.us-east-1.amazonaws.com/dev"
+export CLOUDFRONT_DISTRIBUTION_ID="E25KWYQ2ZRQULX"
 
 # Build Configuration
 export UNITY_PROJECT_PATH="$(pwd)"
@@ -30,8 +24,6 @@ export VERSION_FORMAT="%Y%m%d_%H%M%S"  # Default timestamp format
 
 # Deployment Paths
 export PRODUCTION_DEPLOY_PATH=""
-export STAGING_DEPLOY_PATH="staging"
-export DEVELOPMENT_DEPLOY_PATH="dev"
 
 # Cache Settings
 export HTML_CACHE_CONTROL="no-cache"
@@ -44,8 +36,6 @@ export SLACK_WEBHOOK_URL=""
 export DISCORD_WEBHOOK_URL=""
 
 # Build Quality Settings
-export DEVELOPMENT_BUILD_OPTIONS="--development"
-export STAGING_BUILD_OPTIONS="--staging"
 export PRODUCTION_BUILD_OPTIONS="--production"
 
 # Unity Build Settings
