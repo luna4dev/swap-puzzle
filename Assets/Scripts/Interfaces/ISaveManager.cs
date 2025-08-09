@@ -1,12 +1,22 @@
 namespace SwapPuzzle.Interfaces
 {
     /// <summary>
-    /// Manages saving and loading game progress
+    /// High-level save management that coordinates persistence and unlock services
     /// </summary>
     public interface ISaveManager
     {
         /// <summary>
-        /// Saves the current game progress
+        /// Gets the progress persistence service
+        /// </summary>
+        IProgressPersistence ProgressPersistence { get; }
+
+        /// <summary>
+        /// Gets the illustration unlock service
+        /// </summary>
+        IIllustrationUnlockService IllustrationUnlockService { get; }
+
+        /// <summary>
+        /// Saves the current game progress and handles any related unlock checks
         /// </summary>
         /// <param name="data">The progress data to save</param>
         void SaveProgress(IProgressData data);
@@ -18,21 +28,10 @@ namespace SwapPuzzle.Interfaces
         IProgressData LoadProgress();
 
         /// <summary>
-        /// Saves the completion status of a level
+        /// Completes a level and handles unlock logic
         /// </summary>
         /// <param name="levelId">The ID of the completed level</param>
-        void SaveLevelCompletion(int levelId);
-
-        /// <summary>
-        /// Unlocks an illustration
-        /// </summary>
-        /// <param name="illustrationId">The ID of the illustration to unlock</param>
-        void UnlockIllustration(int illustrationId);
-
-        /// <summary>
-        /// Checks if saved data is available
-        /// </summary>
-        /// <returns>True if saved data exists, false otherwise</returns>
-        bool IsDataAvailable();
+        /// <param name="progressData">Current progress data</param>
+        void CompleteLevel(int levelId, IProgressData progressData);
     }
 } 

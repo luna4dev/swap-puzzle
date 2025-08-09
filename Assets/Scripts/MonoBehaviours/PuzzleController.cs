@@ -4,24 +4,14 @@ using SwapPuzzle.Services;
 
 namespace SwapPuzzle.MonoBehaviours
 {
-    [RequireComponent(typeof(GridSystem))]
+    [RequireComponent(typeof(PuzzleGrid))]
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {
-        private GridSystem _gridSystem;
-        public GridSystem GridSystem
-        {
-            get
-            {
-                if (_gridSystem == null) _gridSystem = GetComponent<GridSystem>();
-                return _gridSystem;
-            }
-        }
+        private PuzzleGrid _puzzleGrid;
 
         public void InitializePuzzle(int levelId)
         {
             // TODO: remove mockup
-            
-
         }
 
         public void SwapPieces(PuzzlePiece a, PuzzlePiece b) {

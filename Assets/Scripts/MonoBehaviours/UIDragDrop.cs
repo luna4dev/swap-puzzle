@@ -97,7 +97,6 @@ namespace SwapPuzzle.MonoBehaviours
             foreach (var item in result)
             {
                 UIDragDrop current = item.gameObject.GetComponent<UIDragDrop>();
-                var test = item.gameObject.GetComponent<GridItem>();
                 if (current == null) continue;
                 target = current;
             }
