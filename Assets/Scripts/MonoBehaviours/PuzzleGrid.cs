@@ -1,6 +1,7 @@
 using UnityEngine;
 using SwapPuzzle.Interfaces;
 using System.Collections.Generic;
+using UnityEditor;
 
 namespace SwapPuzzle.MonoBehaviours
 {
@@ -146,9 +147,9 @@ namespace SwapPuzzle.MonoBehaviours
                 }
             }
 
-
             int x = 0, y = 0;
-            foreach (Transform child in transform) {
+            foreach (Transform child in transform)
+            {
                 // initialize piece object
                 PuzzlePiece piece = child.GetComponent<PuzzlePiece>();
                 piece.Initialize(x, y, x + y * grid.Length + 1);
@@ -157,7 +158,25 @@ namespace SwapPuzzle.MonoBehaviours
                 RectTransform rect = piece.GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(puzzlePieceSize, puzzlePieceSize);
 
+                // set piece position
                 SetPieceAt(x, y, piece);
+
+                // set ui dragdrop event
+                UIDragDrop uiDragDrop = piece.GetComponent<UIDragDrop>();
+                uiDragDrop.OnDrop.RemoveAllListeners();
+                uiDragDrop.OnDrop.AddListener(() =>
+                {
+                    var dropped = UIDragDrop.Dropped.GetComponent<PuzzlePiece>();
+                    var dropTarget = UIDragDrop.DropTarget.GetComponent<PuzzlePiece>();
+
+                    // check valid
+                    if (dropped == null) return;
+                    if (dropTarget == null) return;
+                    if (!CanSwapPieces(dropped, dropTarget)) return;
+
+                    // swap
+                    InitiateSwap(dropped, dropTarget);
+                });
 
                 child.gameObject.SetActive(true);
                 x++;
@@ -167,7 +186,7 @@ namespace SwapPuzzle.MonoBehaviours
                     y++;
                 }
                 if (y >= grid.Length) break;
-            } 
+            }
         }
     }
 }

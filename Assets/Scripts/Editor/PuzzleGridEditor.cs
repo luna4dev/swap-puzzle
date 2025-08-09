@@ -6,7 +6,6 @@ using SwapPuzzle.MonoBehaviours;
 [CustomEditor(typeof(PuzzleGrid))]
 public class PuzzleGridEditor : Editor {
 
-    private int _pieceCountPerRow = 4;
     private int _pieceCountPerRowForInitialize = 4;
 
     public override void OnInspectorGUI() {

@@ -14,7 +14,7 @@ namespace SwapPuzzle.MonoBehaviours
         /// <summary>
         /// The most recent UIDragDrop object that was being targeted
         /// </summary>
-        public static UIDragDrop DroppedTarget;
+        public static UIDragDrop DropTarget;
 
         [SerializeField] public UnityEvent OnDrop;
 
@@ -81,7 +81,7 @@ namespace SwapPuzzle.MonoBehaviours
             if (target == null) return;
 
             Dropped = this;
-            DroppedTarget = target;
+            DropTarget = target;
             OnDrop?.Invoke();
         }
 

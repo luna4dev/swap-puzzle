@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5414b53573e848438a758e1c5216506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _puzzleGrid: {fileID: 7335159523623702225}
 --- !u!114 &7335159523623702225
 MonoBehaviour:
   m_ObjectHideFlags: 0
