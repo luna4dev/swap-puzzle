@@ -9,20 +9,35 @@ namespace SwapPuzzle.MonoBehaviours
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {
         [SerializeField] private PuzzleGrid _puzzleGrid;
+        [SerializeField] private PuzzleSpriteProvider _spriteProvider;
+        // TODO: remove before release
+        [SerializeField] private LevelData MockupLevelData;
 
         public void InitializePuzzle(int levelId)
         {
             // TODO: remove mockup
-            // mockup
-            LevelData levelData = new()
-            {
-                LevelId = 999,
-                GridSize = 4,
-                PreSolvedPieces = 3
-            };
-
+            LevelData levelData = MockupLevelData;
             _puzzleGrid.InitializeGrid(levelData.GridSize);
+            RenderSpriteToPuzzlePieces(levelData);
             ShufflePieces();
+        }
+
+        public void RenderSpriteToPuzzlePieces(LevelData levelData)
+        {
+            if (_spriteProvider == null)
+            {
+                throw new System.Exception("Sprite Renderer not found");
+            }
+            _spriteProvider.Initialize(levelData.Illustration, levelData.GridSize);
+
+
+            for (int y = 0; y < levelData.GridSize; y++)
+            {
+                for (int x = 0; x < levelData.GridSize; x++)
+                {
+                    _puzzleGrid.GetPieceAt(x, y).SetImage(_spriteProvider.GetSprite(x, y));
+                }
+            }
         }
 
         public void ShufflePieces()
@@ -43,7 +58,7 @@ namespace SwapPuzzle.MonoBehaviours
             for (int i = pieces.Count - 1; i > 0; i--)
             {
                 int j = Random.Range(0, i + 1);
-                (pieces[i], pieces[j]) = (pieces[j],pieces[i]);
+                (pieces[i], pieces[j]) = (pieces[j], pieces[i]);
             }
 
             // Put shuffled pieces back
@@ -56,6 +71,7 @@ namespace SwapPuzzle.MonoBehaviours
                 }
             }
         }
+
 
         public void CheckSolution()
         {

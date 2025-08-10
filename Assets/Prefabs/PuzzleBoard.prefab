@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3327287073853844829}
   - component: {fileID: 618273045163845766}
   - component: {fileID: 7335159523623702225}
+  - component: {fileID: 4369553311607653397}
   - component: {fileID: 3657424125791394770}
   - component: {fileID: 8728071142834157642}
   m_Layer: 5
@@ -52,6 +53,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _puzzleGrid: {fileID: 7335159523623702225}
+  _spriteProvider: {fileID: 4369553311607653397}
+  MockupLevelData: {fileID: 0}
 --- !u!114 &7335159523623702225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,6 +68,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   piecePrefab: {fileID: 2909896273329279244, guid: cf695ec9a84e54d3b8ea02521ca7dc9e, type: 3}
+--- !u!114 &4369553311607653397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251079314114655903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca6ba4d9243f40c3b81fcb8e2ca6080, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3657424125791394770
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -868,6 +868,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PuzzleBoard
       objectReference: {fileID: 0}
+    - target: {fileID: 618273045163845766, guid: 880047093fcf244bab9915cbd251bf6f, type: 3}
+      propertyPath: MockupLevelData
+      value: 
+      objectReference: {fileID: 11400000, guid: 8bc6c9cb996fd4862a09283fcae851a3, type: 2}
     - target: {fileID: 3327287073853844829, guid: 880047093fcf244bab9915cbd251bf6f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

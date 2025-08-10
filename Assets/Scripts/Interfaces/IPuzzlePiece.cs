@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace SwapPuzzle.Interfaces
 {
     /// <summary>
@@ -24,5 +26,10 @@ namespace SwapPuzzle.Interfaces
         /// Marks the piece as solved
         /// </summary>
         void MarkAsSolved();
+
+        /// <summary>
+        /// Set the image of this puzzle piece
+        /// </summary>
+        void SetImage(Sprite sprite);
     }
 } 

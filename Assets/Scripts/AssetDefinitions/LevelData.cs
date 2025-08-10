@@ -9,8 +9,8 @@ namespace SwapPuzzle.AssetDefinitions
         [SerializeField] private int _levelId;
         public int LevelId { get => _levelId; set => _levelId = value; }
 
-        [SerializeField] private Texture2D _illustration;
-        public Texture2D Illustration { get => _illustration; set => _illustration = value; }
+        [SerializeField] private Sprite _illustration;
+        public Sprite Illustration { get => _illustration; set => _illustration = value; }
 
         [SerializeField] private int _gridSize;
         public int GridSize { get => _gridSize; set => _gridSize = value; }

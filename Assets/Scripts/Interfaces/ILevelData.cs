@@ -5,7 +5,7 @@ namespace SwapPuzzle.Interfaces
     public interface ILevelData
     {
         int LevelId { get; }
-        Texture2D Illustration { get; }
+        Sprite Illustration { get; }
         int GridSize { get; }
         int PreSolvedPieces { get; }
         bool IsVariation { get; }
