@@ -7,6 +7,9 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzleGrid : MonoBehaviour, IPuzzleGrid
     {
+        public delegate void Swap();
+        public Swap OnSwap;
+
         /// <summary>
         /// a length and height of the puzzle piece
         /// </summary>
@@ -50,7 +53,7 @@ namespace SwapPuzzle.MonoBehaviours
             }
         }
 
-        public void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2)
+        public void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2, bool emitEvent = false)
         {
             (int piece1X, int piece1Y) = GetCoord(piece1);
             if (piece1X == -1) return;
@@ -60,6 +63,8 @@ namespace SwapPuzzle.MonoBehaviours
 
             SetPieceAt(piece1X, piece1Y, piece2);
             SetPieceAt(piece2X, piece2Y, piece1);
+
+            if (emitEvent) OnSwap.Invoke();
         }
 
         public void HandlePieceSelection(IPuzzlePiece selectedPiece)
@@ -164,19 +169,7 @@ namespace SwapPuzzle.MonoBehaviours
                 // set ui dragdrop event
                 UIDragDrop uiDragDrop = piece.GetComponent<UIDragDrop>();
                 uiDragDrop.OnDrop.RemoveAllListeners();
-                uiDragDrop.OnDrop.AddListener(() =>
-                {
-                    var dropped = UIDragDrop.Dropped.GetComponent<PuzzlePiece>();
-                    var dropTarget = UIDragDrop.DropTarget.GetComponent<PuzzlePiece>();
-
-                    // check valid
-                    if (dropped == null) return;
-                    if (dropTarget == null) return;
-                    if (!CanSwapPieces(dropped, dropTarget)) return;
-
-                    // swap
-                    InitiateSwap(dropped, dropTarget);
-                });
+                uiDragDrop.OnDrop.AddListener(HandlePuzzlePieceDrop);
 
                 child.gameObject.SetActive(true);
                 x++;
@@ -187,6 +180,20 @@ namespace SwapPuzzle.MonoBehaviours
                 }
                 if (y >= grid.Length) break;
             }
+        }
+
+        private void HandlePuzzlePieceDrop()
+        {
+            var dropped = UIDragDrop.Dropped.GetComponent<PuzzlePiece>();
+            var dropTarget = UIDragDrop.DropTarget.GetComponent<PuzzlePiece>();
+
+            // check valid
+            if (dropped == null) return;
+            if (dropTarget == null) return;
+            if (!CanSwapPieces(dropped, dropTarget)) return;
+
+            // swap
+            InitiateSwap(dropped, dropTarget, true);
         }
     }
 }

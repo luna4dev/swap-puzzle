@@ -34,7 +34,8 @@ namespace SwapPuzzle.Interfaces
         /// </summary>
         /// <param name="piece1">The first piece</param>
         /// <param name="piece2">The second piece</param>
-        void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2);
+        /// <param anme="piece3">A flag to emit swap event</param>
+        void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2, bool emitEvent);
 
         /// <summary>
         /// Handles the selection of a piece by the player
