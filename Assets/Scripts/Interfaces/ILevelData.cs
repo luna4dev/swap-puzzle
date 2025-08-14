@@ -7,7 +7,7 @@ namespace SwapPuzzle.Interfaces
         int LevelId { get; }
         Sprite Illustration { get; }
         int GridSize { get; }
-        int PreSolvedPieces { get; }
+        int PresolvedPieces { get; }
         bool IsVariation { get; }
         int BaseLevel { get; }
         string LevelName { get; }

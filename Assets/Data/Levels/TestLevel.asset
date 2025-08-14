@@ -15,6 +15,6 @@ MonoBehaviour:
   _levelId: 999
   _illustration: {fileID: -5347570014285681621, guid: f885b1e1a13c942a58bb886bf2f75e99, type: 3}
   _gridSize: 4
-  _preSolvedPieces: 2
+  _presolvedPieces: 3
   _isVariation: 0
   _baseLevel: 0

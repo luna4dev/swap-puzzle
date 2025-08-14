@@ -14,7 +14,7 @@ namespace SwapPuzzle.Interfaces
         /// <summary>
         /// Shuffles the puzzle pieces to start the game
         /// </summary>
-        void ShufflePieces();
+        void ShufflePieces(int presolvedPieces);
 
         /// <summary>
         /// Checks if the current puzzle state is a solution

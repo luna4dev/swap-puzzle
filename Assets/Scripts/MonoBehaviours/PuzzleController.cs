@@ -1,14 +1,14 @@
 using UnityEngine;
 using SwapPuzzle.Interfaces;
-using SwapPuzzle.Services;
 using SwapPuzzle.AssetDefinitions;
-using System.Collections.Generic;
+using SwapPuzzle.Utilities;
 
 namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {
         private bool _initialized;
+        private IShuffler _shuffler;
         [SerializeField] private PuzzleGrid _puzzleGrid;
         [SerializeField] private PuzzleSpriteProvider _spriteProvider;
         // TODO: remove before release
@@ -28,12 +28,15 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void InitializePuzzle(int levelId)
         {
+            _shuffler = new ControlledPlacement();
+
             // TODO: remove mockup
             LevelData levelData = MockupLevelData;
             _puzzleGrid.InitializeGrid(levelData.GridSize);
             _puzzleGrid.OnSwap += HandleSwap;
             RenderSpriteToPuzzlePieces(levelData);
-            ShufflePieces();
+            ShufflePieces(levelData.PresolvedPieces);
+            CheckSolution();
 
             _initialized = true;
         }
@@ -56,36 +59,9 @@ namespace SwapPuzzle.MonoBehaviours
             }
         }
 
-        public void ShufflePieces()
+        public void ShufflePieces(int presolvedPiecesCount) 
         {
-            int gridSize = _puzzleGrid.GetGridSize();
-
-            // Create list of all pieces
-            List<IPuzzlePiece> pieces = new List<IPuzzlePiece>();
-            for (int x = 0; x < gridSize; x++)
-            {
-                for (int y = 0; y < gridSize; y++)
-                {
-                    pieces.Add(_puzzleGrid.GetPieceAt(x, y));
-                }
-            }
-
-            // Fisher-Yates shuffle - guarantees every piece moves
-            for (int i = pieces.Count - 1; i > 0; i--)
-            {
-                int j = Random.Range(0, i + 1);
-                (pieces[i], pieces[j]) = (pieces[j], pieces[i]);
-            }
-
-            // Put shuffled pieces back
-            int index = 0;
-            for (int x = 0; x < gridSize; x++)
-            {
-                for (int y = 0; y < gridSize; y++)
-                {
-                    _puzzleGrid.SetPieceAt(x, y, pieces[index++]);
-                }
-            }
+            _shuffler.Shuffle(_puzzleGrid, presolvedPiecesCount);
         }
 
         public void HandleSwap()

@@ -15,8 +15,8 @@ namespace SwapPuzzle.AssetDefinitions
         [SerializeField] private int _gridSize;
         public int GridSize { get => _gridSize; set => _gridSize = value; }
 
-        [SerializeField] private int _preSolvedPieces;
-        public int PreSolvedPieces { get => _preSolvedPieces; set => _preSolvedPieces = value; }
+        [SerializeField] private int _presolvedPieces;
+        public int PresolvedPieces { get => _presolvedPieces; set => _presolvedPieces = value; }
 
         [SerializeField] private bool _isVariation;
         public bool IsVariation { get => _isVariation; set => _isVariation = value; }
