@@ -16,4 +16,4 @@ Unity puzzle game with drag-and-drop mechanics, level progression system, and un
 ## Development Notes
 - Uses Addressable Assets system
 - WebGL target platform
-- Git ignores `Builds/Archive/` and `Builds/Version/` folders only
+- When adding a README files for the folder. Need to be short and simple. Don't have to explain every cs files. give summary of what this folder is for.
