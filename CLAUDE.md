@@ -9,10 +9,6 @@ Unity puzzle game with drag-and-drop mechanics, level progression system, and un
 - Illustration gallery that unlocks with progress
 - Build system with custom Unity scripts
 
-## Build Commands
-- Build script: `Builds/BuildScripts/build.sh`
-- Requires Unity CLI or Unity Hub installation
-
 ## Development Notes
 - Uses Addressable Assets system
 - WebGL target platform
