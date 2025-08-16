@@ -35,14 +35,20 @@ namespace SwapPuzzle.MonoBehaviours
 
         }
 
-        public void OnPlayButtonPressed(int level)
+        public void OnPlayButtonPressed()
         {
-
+            if (SceneManager.Instance != null)
+            {
+                SceneManager.Instance.LoadScene(ESceneType.Game, ETransitionType.Fade);
+            }
         }
 
         public void OnIndexButtonPressed()
         {
-
+            if (SceneManager.Instance != null)
+            {
+                SceneManager.Instance.LoadScene(ESceneType.Index, ETransitionType.Fade);
+            }
         }
     }
 }

@@ -18,8 +18,7 @@ namespace SwapPuzzle.Interfaces
         /// <summary>
         /// Handles play button press for a specific level
         /// </summary>
-        /// <param name="levelId">The ID of the level to play</param>
-        void OnPlayButtonPressed(int levelId);
+        void OnPlayButtonPressed();
 
         /// <summary>
         /// Handles index button press to view the illustration gallery
