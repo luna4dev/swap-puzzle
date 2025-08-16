@@ -11,3 +11,8 @@ Concrete MonoBehaviour implementations for the SwapPuzzle game.
 ## Architecture Implementation
 
 MonoBehaviours that implement the interface-driven architecture, providing concrete functionality for Unity GameObjects and scene management.
+
+
+## Script Execution Order
+
+Managers MonoBehaviors should always have higher execution order. Please check Edit > Project Settings > Script Execution Order.

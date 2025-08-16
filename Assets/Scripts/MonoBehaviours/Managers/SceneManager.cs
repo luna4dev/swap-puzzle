@@ -33,9 +33,9 @@ namespace SwapPuzzle.MonoBehaviours
 
             var previousScene = currentScene;
             currentScene = targetScene;
-            
+
             OnSceneChanged?.Invoke(targetScene);
-            
+
             UnityEngine.SceneManagement.SceneManager.LoadScene(targetScene.ToString());
         }
     }
