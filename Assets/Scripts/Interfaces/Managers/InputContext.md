@@ -1,123 +1,152 @@
-# Navigation Context System Design
+# Input Context System Implementation
 
 ## Overview
-Design for a navigation context system that handles both mobile browser input (primary) and mouse/keyboard input (secondary) using the existing `IInputContext` and `IInputContextManager` infrastructure.
+Complete input context system for Unity puzzle game that handles mouse, keyboard, and touch input through a unified pipeline. Uses `InputManager` → `InputContextManager` → `IInputContext` architecture.
 
-## Core Principles
+## Architecture Overview
 
-### Mobile-First Design
-- **Primary**: Touch/tap interactions, swipe gestures
-- **Secondary**: Mouse clicks, keyboard navigation
-- **Responsive**: Adapt behavior based on input method detection
+### Current Implementation
+The system consists of three main components:
 
-### Context-Aware Navigation
-Different scenes/states require different navigation behaviors:
-- **Menu Navigation**: List/grid selection, back/forward flow
-- **Puzzle Interaction**: Drag-and-drop, piece selection
-- **Gallery Browsing**: Swipe navigation, zoom interactions
-- **Dialog/Modal**: Focus trapping, escape handling
+1. **InputManager** (MonoBehaviour): Raw input collection and conversion
+2. **InputContextManager** (MonoBehaviour): Context management and routing  
+3. **IInputContext**: Context-specific input handling
 
-## Input Mapping Strategy
-
-### Touch/Mouse Unified Handling
+### Input Pipeline
 ```
-Touch/Click → Select InputType
-Swipe Left/Right → Left/Right InputType  
-Swipe Up/Down → Up/Down InputType
-Pinch → Zoom InputType
-Pan → Pan InputType
+Unity Input → InputManager → InputData → InputContextManager → CurrentContext.HandleInput()
 ```
 
-### Gesture Recognition
-- **Tap**: Quick press/release for selection
-- **Hold**: Long press for context menus or alternative actions
-- **Swipe**: Directional movement for navigation
-- **Pinch**: Two-finger zoom (gallery/puzzle view)
+### Scene Integration
+- InputContextManager subscribes to SceneManager events
+- Input disabled during scene transitions
+- Scene controllers that implement IInputContext become active contexts automatically
 
-### Keyboard Fallbacks
-- **Arrow Keys**: Map to Up/Down/Left/Right
-- **Enter/Space**: Map to Confirm
-- **Escape**: Map to Cancel/Back
-- **Tab**: Focus navigation in menus
+## InputManager Implementation
 
-## Context Hierarchy Design
+### Supported Input Types
+```csharp
+public enum InputType
+{
+    Back, Forward, Left, Right, Up, Down,
+    Confirm, Cancel, Menu, Pan, Zoom, Select
+}
+```
 
-### Navigation Strategy
+### Mouse Input Handling
+- **Click**: Maps to `Select` InputType with world position
+- **Drag**: Starts after drag threshold, maps to `Pan` with delta movement
+- **Scroll**: Maps to `Zoom` with scroll value
+- **Position**: Automatically converted from screen to world coordinates
 
-The navigation system uses action-based routing where common navigation actions have different behaviors depending on the current context state.
+### Keyboard Input Handling  
+- **WASD/Arrow Keys**: Map to directional InputTypes (Up/Down/Left/Right)
+- **Enter/Space**: Map to `Confirm`
+- **Escape**: Maps to `Cancel`  
+- **Tab**: Maps to `Menu`
 
-### Core Navigation Actions
+### InputData Structure
+```csharp
+public struct InputData
+{
+    public Vector2 Position;    // World position
+    public Vector2 Delta;       // Movement delta
+    public float Value;         // Scroll/intensity value
+    public bool IsPressed;      // Input started
+    public bool IsReleased;     // Input ended
+    public bool IsHeld;         // Input continuing
+}
+```
 
-#### Go Back Action
-- **Root Navigation**: Exit application or return to entry point
-- **Nested Navigation**: Return to parent navigation level
-- **Modal/Popup**: Close overlay and return to underlying context
-- **Sub-Menu**: Return to parent menu
-- **Interactive State**: Cancel current interaction and return to idle
+## InputContextManager Implementation
 
-#### Go Forward Action
-- **Root Navigation**: Proceed to main content area
-- **Selection Context**: Confirm selection and advance
-- **Interactive State**: Complete current action
-- **Modal/Popup**: Execute primary action and close
+### Context Management
+- **Singleton pattern**: Persistent across scene changes
+- **Context stack**: Push/pop system for layered contexts (modals, menus)
+- **Scene integration**: Automatically sets scene controllers as contexts
+- **Input gating**: Disables input during scene transitions
 
-#### Navigate Up/Down Actions
-- **List/Grid Navigation**: Move focus vertically
-- **Hierarchical Menus**: Navigate between menu levels
-- **Interactive Elements**: Move between focusable UI elements
-- **Content Browsing**: Scroll or navigate content vertically
+### Key Methods
+```csharp
+void PushContext(IInputContext context)      // Add context to stack
+bool PopContext()                            // Remove top context
+void ClearAllContexts()                      // Clear all contexts
+bool ProcessInput(InputType, InputData)      // Route input to current context
+```
 
-#### Navigate Left/Right Actions
-- **Tab Navigation**: Switch between horizontal sections
-- **Content Browsing**: Navigate content horizontally
-- **Multi-Option Selection**: Move between choices
-- **Interactive Elements**: Navigate within grouped controls
+## IInputContext Interface
 
-#### Select/Confirm Action
-- **Focused Element**: Activate currently focused item
-- **Interactive Mode**: Pick up/place or toggle selection
-- **Navigation Context**: Enter selected area or confirm choice
+### Implementation Requirements
+```csharp
+public interface IInputContext
+{
+    string ContextName { get; }           // Debug identifier
+    int Priority { get; }                 // Context priority level
+    
+    bool HandleInput(InputType, InputData);  // Process input
+    void HandleContextChange();              // Context activation callback
+}
+```
 
-### Context Stack Management
-- Use existing `IInputContextManager` push/pop system
-- Actions are handled by the current top context
-- Unhandled actions bubble down to lower priority contexts
-- Graceful fallback when contexts are removed
+### Context Behavior
+- **HandleInput**: Return true if input was consumed, false to pass through
+- **HandleContextChange**: Called when context becomes active
+- **Priority**: Higher priority contexts handled first (future enhancement)
 
-## Implementation Considerations
+### Scene Controller Integration
+Scene controllers implementing IInputContext automatically become active contexts when scenes load, providing seamless input handling per scene.
 
-### Mobile Browser Constraints
-- **No native gestures**: Implement custom gesture recognition
-- **Touch precision**: Larger hit areas for touch targets
-- **Performance**: Efficient gesture detection without frame drops
-- **Viewport handling**: Account for virtual keyboards and browser UI
+## Usage Examples
 
-### Responsive Behavior
-- **Input method detection**: Switch between touch and mouse modes
-- **Dynamic hit areas**: Adjust based on input method
-- **Feedback systems**: Different visual/audio feedback for touch vs mouse
+### Creating a Custom Context
+```csharp
+public class PuzzleContext : MonoBehaviour, IInputContext
+{
+    public string ContextName => "PuzzleGame";
+    public int Priority => 0;
 
-### Accessibility
-- **Keyboard navigation**: Full keyboard support as fallback
-- **Focus management**: Clear focus indicators and logical tab order
-- **Screen reader support**: Proper ARIA-like announcements
+    public bool HandleInput(InputType inputType, InputData inputData)
+    {
+        switch (inputType)
+        {
+            case InputType.Select:
+                if (inputData.IsPressed) SelectPiece(inputData.Position);
+                return true;
+                
+            case InputType.Pan:
+                if (inputData.IsHeld) DragPiece(inputData.Delta);
+                if (inputData.IsReleased) DropPiece();
+                return true;
+                
+            case InputType.Cancel:
+                CancelCurrentAction();
+                return true;
+        }
+        return false; // Not handled
+    }
 
-## Integration Points
+    public void HandleContextChange()
+    {
+        // Context became active
+        Debug.Log("Puzzle context activated");
+    }
+}
+```
 
-### Existing Systems
-- **Scene Management**: Context switching on scene transitions
-- **UI Systems**: Integration with Unity UI components
-- **Save System**: Remember navigation preferences
-- **Asset System**: Load gesture/input configuration from addressables
+### System Integration
+The system is fully integrated with existing scene management:
+- **SceneManager**: Triggers context changes on scene transitions
+- **Controllers**: Scene controllers automatically become input contexts
+- **Singleton Management**: All managers persist across scenes
+- **Input Gating**: Prevents input during scene loading
 
-### Performance Optimization
-- **Gesture pooling**: Reuse gesture detection objects
-- **Input buffering**: Smooth input handling during frame drops
-- **Context caching**: Avoid recreation of common contexts
+### Debugging
+- InputData includes comprehensive ToString() for logging
+- Context names provide clear debugging information
+- Input can be easily enabled/disabled for testing
 
-## Next Steps
-1. Implement BaseNavigationContext with core gesture recognition
-2. Create specific context implementations for each scene type
-3. Integrate with existing scene management system
-4. Add mobile browser optimization and testing
-5. Implement keyboard navigation fallbacks
+## Current Status
+✅ **Complete**: Input collection, context management, scene integration  
+✅ **Tested**: Basic mouse/keyboard input working  
+⚠️ **Pending**: Touch input support for mobile browsers  
+⚠️ **Pending**: Advanced gesture recognition (pinch, complex swipes)
