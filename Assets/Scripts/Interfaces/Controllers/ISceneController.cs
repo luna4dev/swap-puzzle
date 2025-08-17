@@ -8,6 +8,7 @@ namespace SwapPuzzle.Interfaces
     /// </summary>
     public interface ISceneController
     {
+        ESceneType Type { get; }
         /// <summary>
         /// Initializes the scene and its components
         /// </summary>

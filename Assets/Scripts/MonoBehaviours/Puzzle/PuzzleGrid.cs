@@ -1,13 +1,12 @@
+using System;
 using UnityEngine;
 using SwapPuzzle.Interfaces;
-using System.Collections.Generic;
 
 namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzleGrid : MonoBehaviour, IPuzzleGrid
     {
-        public delegate void Swap();
-        public Swap OnSwap;
+        public event Action OnSwap;
 
         /// <summary>
         /// a length and height of the puzzle piece

@@ -34,8 +34,6 @@ namespace SwapPuzzle.MonoBehaviours
         [SerializeField] Button BackButton;
         [SerializeField] Button CloseButton;
 
-        private SceneManager _sceneManager;
-
         // TODO: move this config to user preference after it is implemented;
         private ESoundPreference _soundPreference = ESoundPreference.PlayAll;
 
@@ -50,22 +48,19 @@ namespace SwapPuzzle.MonoBehaviours
             { ESceneType.Index, new ContextMenuMode(true, true) }
         };
 
-        void Awake()
+        private void OnEnable()
         {
-            if (SceneManager.Instance == null)
-            {
-                throw new System.Exception("Scene Manager not found");
-            }
-            _sceneManager = SceneManager.Instance;
-
-            UpdateModeByScene();
+            SceneManager.Instance.OnSceneChanged += HandleSceneChanged;
         }
 
-        private void UpdateModeByScene()
+        private void OnDisable()
         {
-            ESceneType currentScene = _sceneManager.CurrentScene;
+            SceneManager.Instance.OnSceneChanged -= HandleSceneChanged;
+        }
 
-            if (_sceneModeMapping.TryGetValue(currentScene, out ContextMenuMode mode))
+        private void HandleSceneChanged(ISceneController sceneController)
+        {
+            if (_sceneModeMapping.TryGetValue(sceneController.Type, out ContextMenuMode mode))
             {
                 SetSoundButton(mode.ShowSoundButton);
                 SetNavigateOutButton(mode.ShowNavigateOutButton);
@@ -105,5 +100,15 @@ namespace SwapPuzzle.MonoBehaviours
             else if (BackButton != null) BackButton.gameObject.SetActive(true);
         }
 
+        public void OnClickNavigateOut()
+        {
+            InputContextManager.Instance.ProcessInput(InputType.Cancel, new InputData());
+        }
+
+        public void OnClickSetSound()
+        {
+            // TODO
+            Debug.Log("Implement this");
+        }
     }
 }

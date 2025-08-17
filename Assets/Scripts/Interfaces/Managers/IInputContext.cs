@@ -27,7 +27,7 @@ namespace SwapPuzzle.Interfaces
         public bool IsReleased;
         public bool IsHeld;
 
-        public InputData(Vector2 position = default, Vector2 delta = default, float value = 0f, 
+        public InputData(Vector2 position = default, Vector2 delta = default, float value = 0f,
                         bool isPressed = false, bool isReleased = false, bool isHeld = false)
         {
             Position = position;
@@ -37,20 +37,19 @@ namespace SwapPuzzle.Interfaces
             IsReleased = isReleased;
             IsHeld = isHeld;
         }
+
+        public override string ToString()
+        {
+            return $"InputData(Pos:{Position}, Delta:{Delta}, Val:{Value}, Pressed:{IsPressed}, Released:{IsReleased}, Held:{IsHeld})";
+        }
     }
 
     public interface IInputContext
     {
         string ContextName { get; }
         int Priority { get; }
-        bool IsActive { get; }
         
-        bool CanHandleInput(InputType inputType);
         bool HandleInput(InputType inputType, InputData inputData);
-        
-        void OnContextActivated();
-        void OnContextDeactivated();
-        void OnContextPaused();
-        void OnContextResumed();
+        void HandleContextChange();
     }
 }
