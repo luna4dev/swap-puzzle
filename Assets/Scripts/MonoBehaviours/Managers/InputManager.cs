@@ -33,7 +33,7 @@ namespace SwapPuzzle.MonoBehaviours
         {
             if (!_enableInput) return;
 
-            HandleMouseInput();
+            // HandleMouseInput();
             HandleKeyboardInput();
         }
 

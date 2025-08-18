@@ -3,7 +3,7 @@ using SwapPuzzle.Interfaces;
 
 namespace SwapPuzzle.MonoBehaviours
 {
-    public class IndexController : MonoBehaviour, IIndexController, IInputContext
+    public class IndexController : MonoBehaviour, IIndexController
     {
         public ESceneType Type => ESceneType.Index;
         public string ContextName => "Index";
@@ -51,7 +51,10 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void ReturnToMainMenu()
         {
-            SceneManager.Instance.LoadScene(ESceneType.MainMenu, ETransitionType.Fade);
+            ConfirmPopup.OpenPopup("Return to Main Menu", "Return to Main Menu", "Yes", "No", true, () =>
+            {
+                SceneManager.Instance.LoadScene(ESceneType.MainMenu, ETransitionType.Fade);
+            });
         }
 
 

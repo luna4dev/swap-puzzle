@@ -3,7 +3,7 @@ using SwapPuzzle.Interfaces;
 
 namespace SwapPuzzle.MonoBehaviours
 {
-    public class EntryPointController : MonoBehaviour, ISceneController, IInputContext
+    public class EntryPointController : MonoBehaviour, ISceneController
     {
         public ESceneType Type => ESceneType.EntryPoint;
         public string ContextName => "EntryPoint";
@@ -53,8 +53,6 @@ namespace SwapPuzzle.MonoBehaviours
             switch (inputType)
             {
                 case InputType.Confirm:
-                case InputType.Select:
-                case InputType.Forward:
                     return true;
                 default:
                     return false;
@@ -72,7 +70,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void HandleContextChange()
         {
-            
+
         }
     }
 }

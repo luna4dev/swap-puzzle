@@ -3,7 +3,7 @@ using SwapPuzzle.Interfaces;
 
 namespace SwapPuzzle.MonoBehaviours
 {
-    public class MainMenuController : MonoBehaviour, IMainMenuController, IInputContext
+    public class MainMenuController : MonoBehaviour, IMainMenuController
     {
         public ESceneType Type => ESceneType.MainMenu;
         public string ContextName => "MainMenu";

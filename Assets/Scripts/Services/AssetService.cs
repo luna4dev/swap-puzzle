@@ -1,10 +1,10 @@
 using UnityEngine;
-using SwapPuzzle.Interfaces;
 using UnityEngine.AddressableAssets;
-using System.Collections.Generic;
-using UnityEngine.Events;
-using System;
 using UnityEngine.ResourceManagement.AsyncOperations;
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SwapPuzzle.Services
 {
@@ -15,48 +15,71 @@ namespace SwapPuzzle.Services
         Prefab,
     }
 
-    public class AssetService : IAssetService
+    public static class AssetService
     {
-        private static AssetService _instance = null;
-        public static AssetService Instance
+        private static void LoadAsset<T>(string path, Action<T, Exception> callback) where T : UnityEngine.Object
         {
-            get
+            Addressables.LoadAssetAsync<T>(path).Completed += (request) =>
             {
-                if (_instance == null)
+                if (request.Status == AsyncOperationStatus.Succeeded)
                 {
-                    _instance = new AssetService();
-                }
-                return _instance;
-            }
-        }
-
-        private void LoadAsset<T>(string path, Action<T, Exception> callback) where T: UnityEngine.Object {
-            Addressables.LoadAssetAsync<T>(path).Completed += (request) => {
-                if (request.Status == AsyncOperationStatus.Succeeded) {
                     callback(request.Result, null);
-                } else {
+                }
+                else
+                {
                     callback(null, new Exception("Failed to load asset: " + path));
                 }
             };
         }
 
-        public ILevelData GetLevelData(int levelId)
+        public static void GetPrefab(string prefabName, Action<GameObject, Exception> callback)
         {
-            return null;
-        }
-
-        public void GetPrefab(string prefabName, Action<GameObject, Exception> callback) {
             string path = ResolveAssetPath(EAssetType.Prefab, prefabName);
-            LoadAsset<GameObject>(path, callback); 
+            LoadAsset<GameObject>(path, callback);
         }
 
-        public void GetIllustration(int illustrationId, Action<Texture2D, Exception> callback)
+        public static async Task<T> LoadAssetAsync<T>(string path) where T : UnityEngine.Object
+        {
+            try
+            {
+                var loadHandle = Addressables.LoadAssetAsync<T>(path);
+                var result = await loadHandle.Task;
+                
+                if (loadHandle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    return result;
+                }
+                else
+                {
+                    throw new Exception($"Failed to load asset: {path}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error loading asset {path}: {ex.Message}");
+            }
+        }
+
+        public static async Task<GameObject> GetPrefabAsync(string prefabName)
+        {
+            string path = ResolveAssetPath(EAssetType.Prefab, prefabName);
+            return await LoadAssetAsync<GameObject>(path);
+        }
+
+        public static async Task<Texture2D> GetIllustrationAsync(int illustrationId)
+        {
+            string path = ResolveIllustrationAssetPath(illustrationId);
+            return await LoadAssetAsync<Texture2D>(path);
+        }
+
+
+        public static void GetIllustration(int illustrationId, Action<Texture2D, Exception> callback)
         {
             string path = ResolveIllustrationAssetPath(illustrationId);
             LoadAsset<Texture2D>(path, callback);
         }
 
-        public List<Sprite> GeneratePuzzlePieces(Texture2D illustration, int gridSize)
+        public static List<Sprite> GeneratePuzzlePieces(Texture2D illustration, int gridSize)
         {
             // make texture2d to rectangular texture2d and get the pixels
             int textureLength = Mathf.Min(illustration.width, illustration.height);
@@ -86,22 +109,22 @@ namespace SwapPuzzle.Services
             return puzzlePieces;
         }
 
-        public void PreloadAssets()
+        public static void PreloadAssets()
         {
 
         }
 
-        public void UnloadUnusedAssets()
+        public static void UnloadUnusedAssets()
         {
 
         }
 
-        private string ResolveIllustrationAssetPath(int illustrationId)
+        private static string ResolveIllustrationAssetPath(int illustrationId)
         {
             return ResolveAssetPath(EAssetType.Illustration, illustrationId.ToString("D3"));
         }
 
-        private string ResolveAssetPath(EAssetType assetType, string assetName)
+        private static string ResolveAssetPath(EAssetType assetType, string assetName)
         {
             switch (assetType)
             {

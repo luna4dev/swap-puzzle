@@ -6,7 +6,7 @@ namespace SwapPuzzle.Interfaces
     /// Base interface for all scene controllers in the game.
     /// Handles scene lifecycle and transitions.
     /// </summary>
-    public interface ISceneController
+    public interface ISceneController: IInputContext
     {
         ESceneType Type { get; }
         /// <summary>

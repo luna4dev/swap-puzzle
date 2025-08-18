@@ -12,6 +12,7 @@ namespace SwapPuzzle.MonoBehaviours
     {
         public event Action OnContextChanged;
         public IInputContext CurrentContext { get; private set; }
+        public IInputContext CurrentRootContext { get; private set; }
         public bool IsEnabled { get; private set; }
         private List<IInputContext> _contextStack = new();
 
@@ -48,6 +49,7 @@ namespace SwapPuzzle.MonoBehaviours
         public void PushContext(IInputContext context)
         {
             _contextStack.Add(context);
+            var prevContext = CurrentContext;
             CurrentContext = context;
             OnContextChanged?.Invoke();
         }
@@ -115,6 +117,9 @@ namespace SwapPuzzle.MonoBehaviours
         private void HandleSceneChangeStarted(ESceneType prevScene, ESceneType nextScene) {
             // block input 
             IsEnabled = false;
+            CurrentContext = null;
+            CurrentRootContext = null;
+            _contextStack.Clear();
         }
 
         private void HandleSceneChanged(ISceneController sceneController)
@@ -126,6 +131,8 @@ namespace SwapPuzzle.MonoBehaviours
             if (sceneController is IInputContext inputContext)
             {
                 CurrentContext = inputContext;
+                CurrentRootContext = inputContext;
+                _contextStack.Add(inputContext);
                 OnContextChanged?.Invoke();
             }
         }

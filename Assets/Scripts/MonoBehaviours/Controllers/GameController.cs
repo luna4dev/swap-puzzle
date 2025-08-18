@@ -3,7 +3,7 @@ using SwapPuzzle.Interfaces;
 
 namespace SwapPuzzle.MonoBehaviours
 {
-    public class GameController : MonoBehaviour, IGameController, IInputContext
+    public class GameController : MonoBehaviour, IGameController
     {
         public ESceneType Type => ESceneType.Game;
         public string ContextName => "Game";
@@ -66,7 +66,10 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void ReturnToMainMenu()
         {
-            SceneManager.Instance.LoadScene(ESceneType.MainMenu, ETransitionType.Fade);
+            ConfirmPopup.OpenPopup("Return to Main Menu", "Return to Main Menu", "Yes", "No", true, () =>
+            {
+                SceneManager.Instance.LoadScene(ESceneType.MainMenu, ETransitionType.Fade);
+            });
         }
 
         private bool CanHandleInput(InputType inputType)

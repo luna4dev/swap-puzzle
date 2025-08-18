@@ -37,9 +37,6 @@ namespace SwapPuzzle.MonoBehaviours
         // TODO: move this config to user preference after it is implemented;
         private ESoundPreference _soundPreference = ESoundPreference.PlayAll;
 
-        // TODO: move this config to popupManager after implemented
-        private bool _isPopupOpened = false;
-
         private static readonly Dictionary<ESceneType, ContextMenuMode> _sceneModeMapping = new Dictionary<ESceneType, ContextMenuMode>
         {
             { ESceneType.EntryPoint, new ContextMenuMode(false, false) },
@@ -50,21 +47,34 @@ namespace SwapPuzzle.MonoBehaviours
 
         private void OnEnable()
         {
-            SceneManager.Instance.OnSceneChanged += HandleSceneChanged;
+            if (InputContextManager.Instance != null)
+            {
+                InputContextManager.Instance.OnContextChanged += HandleContextChange;
+            }
         }
 
         private void OnDisable()
         {
-            SceneManager.Instance.OnSceneChanged -= HandleSceneChanged;
+            if (InputContextManager.Instance != null)
+            {
+                InputContextManager.Instance.OnContextChanged -= HandleContextChange;
+            }
         }
 
-        private void HandleSceneChanged(ISceneController sceneController)
+        private void HandleContextChange()
         {
-            if (_sceneModeMapping.TryGetValue(sceneController.Type, out ContextMenuMode mode))
+            if (InputContextManager.Instance.CurrentRootContext is ISceneController sceneController)
             {
-                SetSoundButton(mode.ShowSoundButton);
-                SetNavigateOutButton(mode.ShowNavigateOutButton);
+                if (_sceneModeMapping.TryGetValue(sceneController.Type, out ContextMenuMode mode))
+                {
+                    SetSoundButton(mode.ShowSoundButton);
+                    SetNavigateOutButton(mode.ShowNavigateOutButton);
+                }
+
+                return;
             }
+
+            throw new System.Exception("Input Context Manager is not configured correctly: Root Context is not found");
         }
 
         private void SetSoundButton(bool active)
@@ -96,7 +106,7 @@ namespace SwapPuzzle.MonoBehaviours
 
             if (!active) return;
 
-            if (_isPopupOpened && CloseButton != null) CloseButton.gameObject.SetActive(true);
+            // if (_isPopupOpened && CloseButton != null) CloseButton.gameObject.SetActive(true);
             else if (BackButton != null) BackButton.gameObject.SetActive(true);
         }
 
