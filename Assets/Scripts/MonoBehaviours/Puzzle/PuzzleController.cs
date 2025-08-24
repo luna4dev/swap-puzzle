@@ -47,7 +47,7 @@ namespace SwapPuzzle.MonoBehaviours
             {
                 throw new System.Exception("Sprite Renderer not found");
             }
-            _spriteProvider.Initialize(levelData.Illustration, levelData.GridSize);
+            _spriteProvider.Initialize(levelData.Illustration.Illustration, levelData.GridSize);
 
 
             for (int y = 0; y < levelData.GridSize; y++)

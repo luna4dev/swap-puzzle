@@ -19,8 +19,7 @@ namespace SwapPuzzle.Interfaces
         /// <summary>
         /// Shows detailed information about an illustration
         /// </summary>
-        /// <param name="data">The illustration data to display</param>
-        void ShowIllustrationDetails(IIllustrationData data);
+        void ShowIllustrationDetails();
 
         /// <summary>
         /// Checks if an illustration is unlocked

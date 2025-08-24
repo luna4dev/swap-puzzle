@@ -8,14 +8,13 @@ namespace SwapPuzzle.Interfaces
         /// <summary>
         /// Saves the current game progress
         /// </summary>
-        /// <param name="data">The progress data to save</param>
-        void SaveProgress(IProgressData data);
+        void SaveProgress();
 
         /// <summary>
         /// Loads the saved game progress
         /// </summary>
         /// <returns>The loaded progress data</returns>
-        IProgressData LoadProgress();
+        IProgressionRuntime LoadProgress();
 
         /// <summary>
         /// Saves the completion status of a level

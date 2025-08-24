@@ -9,17 +9,15 @@ namespace SwapPuzzle.Interfaces
         /// Unlocks an illustration if conditions are met
         /// </summary>
         /// <param name="illustrationId">The ID of the illustration to unlock</param>
-        /// <param name="progressData">Current player progress</param>
         /// <returns>True if successfully unlocked, false if conditions not met</returns>
-        bool UnlockIllustration(int illustrationId, IProgressData progressData);
+        bool UnlockIllustration(int illustrationId);
 
         /// <summary>
         /// Checks if an illustration can be unlocked based on current progress
         /// </summary>
         /// <param name="illustrationId">The ID of the illustration to check</param>
-        /// <param name="progressData">Current player progress</param>
         /// <returns>True if unlock conditions are met</returns>
-        bool CanUnlockIllustration(int illustrationId, IProgressData progressData);
+        bool CanUnlockIllustration(int illustrationId);
 
         /// <summary>
         /// Gets the unlock requirements for a specific illustration
