@@ -5,6 +5,29 @@ using UnityEngine.SceneManagement;
 
 namespace SwapPuzzle.MonoBehaviours
 {
+    /// <summary>
+    /// Handles Unity scene loading, unloading, and scene controller management.
+    /// Mid-level manager that responds to higher-level game state commands.
+    /// 
+    /// Responsibilities:
+    /// - Load/unload Unity scenes using SceneManager API
+    /// - Find and manage scene controllers (ISceneController) in loaded scenes
+    /// - Handle scene transitions with optional transition effects
+    /// - Fire scene change events for other systems to respond
+    /// - Validate scene configuration (SceneController tags and components)
+    /// 
+    /// Authority Hierarchy:
+    /// - Reports to: GameStateManager (decides WHEN to change scenes based on game logic)
+    /// - Commands: Scene controllers within individual scenes
+    /// - Coordinates with: ProgressManager (for level-based scene changes)
+    /// 
+    /// Design Notes:
+    /// - This manager focuses on the "HOW" of scene management (Unity technical aspects)
+    /// - GameStateManager handles the "WHY" (game logic, state transitions)
+    /// - Scene changes are typically initiated by GameStateManager, not directly by UI
+    /// - Each scene must have a GameObject tagged "SceneController" with ISceneController component
+    /// - EntryPoint scene controller is assigned in inspector as the default/fallback scene
+    /// </summary>
     public class SceneManager : MonoBehaviour, ISceneManager
     {
         public event Action<ESceneType, ESceneType> OnSceneChangeStarted;

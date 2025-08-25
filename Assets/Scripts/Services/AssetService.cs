@@ -10,33 +10,19 @@ namespace SwapPuzzle.Services
 {
     public enum EAssetType
     {
-        Level,
-        Illustration,
+        LevelProgression,
+        GalleryProgression,
         Prefab,
     }
 
     public static class AssetService
     {
-        private static void LoadAsset<T>(string path, Action<T, Exception> callback) where T : UnityEngine.Object
+        public static Dictionary<EAssetType, string> Paths = new()
         {
-            Addressables.LoadAssetAsync<T>(path).Completed += (request) =>
-            {
-                if (request.Status == AsyncOperationStatus.Succeeded)
-                {
-                    callback(request.Result, null);
-                }
-                else
-                {
-                    callback(null, new Exception("Failed to load asset: " + path));
-                }
-            };
-        }
-
-        public static void GetPrefab(string prefabName, Action<GameObject, Exception> callback)
-        {
-            string path = ResolveAssetPath(EAssetType.Prefab, prefabName);
-            LoadAsset<GameObject>(path, callback);
-        }
+            {EAssetType.Prefab, "Assets/Prefabs/"},
+            {EAssetType.LevelProgression, "Assets/Data/"},
+            {EAssetType.GalleryProgression, "Assets/Data/"},
+        };
 
         public static async Task<T> LoadAssetAsync<T>(string path) where T : UnityEngine.Object
         {
@@ -44,7 +30,7 @@ namespace SwapPuzzle.Services
             {
                 var loadHandle = Addressables.LoadAssetAsync<T>(path);
                 var result = await loadHandle.Task;
-                
+
                 if (loadHandle.Status == AsyncOperationStatus.Succeeded)
                 {
                     return result;
@@ -64,19 +50,6 @@ namespace SwapPuzzle.Services
         {
             string path = ResolveAssetPath(EAssetType.Prefab, prefabName);
             return await LoadAssetAsync<GameObject>(path);
-        }
-
-        public static async Task<Texture2D> GetIllustrationAsync(int illustrationId)
-        {
-            string path = ResolveIllustrationAssetPath(illustrationId);
-            return await LoadAssetAsync<Texture2D>(path);
-        }
-
-
-        public static void GetIllustration(int illustrationId, Action<Texture2D, Exception> callback)
-        {
-            string path = ResolveIllustrationAssetPath(illustrationId);
-            LoadAsset<Texture2D>(path, callback);
         }
 
         public static List<Sprite> GeneratePuzzlePieces(Texture2D illustration, int gridSize)
@@ -119,21 +92,15 @@ namespace SwapPuzzle.Services
 
         }
 
-        private static string ResolveIllustrationAssetPath(int illustrationId)
-        {
-            return ResolveAssetPath(EAssetType.Illustration, illustrationId.ToString("D3"));
-        }
-
         private static string ResolveAssetPath(EAssetType assetType, string assetName)
         {
             switch (assetType)
             {
-                case EAssetType.Illustration:
-                    return "Assets/Sprites/Illustrations/" + assetName + ".png";
-                case EAssetType.Level:
-                    return "Assets/Levels/" + assetName + ".asset";
                 case EAssetType.Prefab:
-                    return "Assets/Prefabs/" + assetName + ".prefab";
+                    return Paths[assetType] + assetName + ".prefab";
+                case EAssetType.LevelProgression:
+                case EAssetType.GalleryProgression:
+                    return Paths[assetType] + assetName + ".asset";
                 default:
                     return null;
             }

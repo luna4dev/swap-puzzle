@@ -11,8 +11,6 @@ namespace SwapPuzzle.AssetDefinitions
 
         [SerializeField] private bool _isTest;
         public bool IsTest { get => _isTest; }
-        [SerializeField] private EDifficultyType _difficulty;
-        public EDifficultyType Difficulty { get => _difficulty; }
         [SerializeField] private List<LevelData> _levels;
         public List<ILevelData> Levels
         {
