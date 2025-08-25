@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 75f5da086126547bba61d5402b6d0b23
+guid: ee954eb6d747b47fbab8b9316fb77794
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - NEXON Lv2 Gothic
+  - NEXON Lv2 Gothic OTF
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
