@@ -23,7 +23,7 @@ namespace SwapPuzzle.MonoBehaviours
     /// 
     /// Design Notes:
     /// - This manager focuses on the "HOW" of scene management (Unity technical aspects)
-    /// - GameStateManager handles the "WHY" (game logic, state transitions)
+    /// - StateManager handles the "WHY" (game logic, state transitions)
     /// - Scene changes are typically initiated by GameStateManager, not directly by UI
     /// - Each scene must have a GameObject tagged "SceneController" with ISceneController component
     /// - EntryPoint scene controller is assigned in inspector as the default/fallback scene
