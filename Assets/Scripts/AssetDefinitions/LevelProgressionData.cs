@@ -17,6 +17,7 @@ namespace SwapPuzzle.AssetDefinitions
             get
             {
                 List<ILevelData> list = new();
+                if (_levels == null) return list;
                 foreach (LevelData item in _levels)
                 {
                     list.Add(item);

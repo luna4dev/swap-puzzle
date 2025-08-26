@@ -11,8 +11,8 @@ namespace SwapPuzzle.Interfaces
     public interface IProgressRuntime
     {
         List<IProgressLog> ProgressLogs { get; }
-        void LogProgressStart(ILevelProgressionData progressionData, ILevelData data);
-        void LogProgressComplete(ILevelProgressionData progressionData, ILevelData data);
+        void LogProgressStart(string levelProgressionName, string levelName);
+        void LogProgressComplete(string levelProgressionName, string levelName);
     }
 
     public interface IProgressLog

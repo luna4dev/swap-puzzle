@@ -11,29 +11,48 @@ namespace SwapPuzzle.Classes
         [SerializeField] private List<ProgressLog> _progressLogs = new List<ProgressLog>();
         public List<IProgressLog> ProgressLogs => new List<IProgressLog>(_progressLogs != null ? _progressLogs : new List<ProgressLog>());
 
+        /// <summary>
+        /// fresh new progress runtime
+        /// </summary>
+        public ProgressRuntime() { }
+
+        /// <summary>
+        /// loading saved progress runtime
+        /// </summary>
+        /// <param name="serializedString"></param>
         public ProgressRuntime(string serializedString)
         {
             InitializeFromSerializedString(serializedString);
         }
 
-        public void LogProgressStart(ILevelProgressionData levelProgressionData, ILevelData levelData)
+        public void LogProgressStart(string levelProgressionName, string levelName)
         {
             if (_progressLogs == null) _progressLogs = new List<ProgressLog>();
-            var log = new ProgressLog(levelProgressionData.Name, levelData.Name, EProgressLogType.Start);
+            var log = new ProgressLog(levelProgressionName, levelName, EProgressLogType.Start);
             _progressLogs.Add(log);
         }
 
-        public void LogProgressComplete(ILevelProgressionData levelProgressionData, ILevelData levelData)
+        public void LogProgressComplete(string levelProgressionName, string levelName)
         {
             if (_progressLogs == null) _progressLogs = new List<ProgressLog>();
-            var log = new ProgressLog(levelProgressionData.Name, levelData.Name, EProgressLogType.Complete);
+            var log = new ProgressLog(levelProgressionName, levelName, EProgressLogType.Complete);
             _progressLogs.Add(log);
         }
 
-        public ProgressLog Last()
+        public string CurrentLevelProgression()
         {
-            if (_progressLogs.Count == 0) return null;
-            return _progressLogs[^1];
+            if (_progressLogs == null || _progressLogs.Count == 0) return null;
+            
+            var lastLog = _progressLogs[_progressLogs.Count - 1];
+            return lastLog.LevelProgressionName;
+        }
+
+        public string CurrentLevel()
+        {
+            if (_progressLogs == null || _progressLogs.Count == 0) return null;
+            
+            var lastLog = _progressLogs[_progressLogs.Count - 1];
+            return lastLog.LevelName;
         }
 
         public string Serialize()

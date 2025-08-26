@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2fe26c3d34cb4b41b41f9dddf444972
+    m_Address: Assets/Music
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 40cec9ab64d7d49c39e4cdccd4f892c6, type: 2}
   m_SchemaSet:

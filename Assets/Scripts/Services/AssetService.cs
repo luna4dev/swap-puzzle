@@ -5,30 +5,54 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SwapPuzzle.AssetDefinitions;
+using UnityEditor.VersionControl;
 
 namespace SwapPuzzle.Services
 {
     public enum EAssetType
     {
         LevelProgression,
+        Level,
         GalleryProgression,
+        Gallery,
+        Illustration,
         Prefab,
     }
 
     public static class AssetService
     {
+        private static Dictionary<string, AsyncOperationHandle> loadedAssets = new();
+        
         public static Dictionary<EAssetType, string> Paths = new()
         {
             {EAssetType.Prefab, "Assets/Prefabs/"},
             {EAssetType.LevelProgression, "Assets/Data/"},
+            {EAssetType.Level, "Assets/Data/Levels/"},
             {EAssetType.GalleryProgression, "Assets/Data/"},
+            {EAssetType.Gallery, "Assets/Data/Galleries/"},
+            {EAssetType.Illustration, "Assets/Data/Illustrations"},
         };
 
-        public static async Task<T> LoadAssetAsync<T>(string path) where T : UnityEngine.Object
+        private static async Task<T> LoadAssetAsync<T>(string path) where T : UnityEngine.Object
         {
             try
             {
+                // handle generic type, ex) texture.png:Sprite vs texture.png:Texture2D
+                string key = $"{path}:{typeof(T).Name}";
+
+                if (loadedAssets.ContainsKey(key) && loadedAssets[key].IsValid())
+                {
+                    var cachedHandle = loadedAssets[key];
+                    if (cachedHandle.Status == AsyncOperationStatus.Succeeded)
+                    {
+                        return (T)cachedHandle.Result;
+                    }
+                }
+
                 var loadHandle = Addressables.LoadAssetAsync<T>(path);
+                loadedAssets[key] = loadHandle;
+
                 var result = await loadHandle.Task;
 
                 if (loadHandle.Status == AsyncOperationStatus.Succeeded)
@@ -52,6 +76,18 @@ namespace SwapPuzzle.Services
             return await LoadAssetAsync<GameObject>(path);
         }
 
+        public static async Task<LevelData> GetLevelDataAsync(string levelName)
+        {
+            string path = ResolveAssetPath(EAssetType.Level, levelName);
+            return await LoadAssetAsync<LevelData>(path);
+        }
+
+        public static async Task<LevelProgressionData> GetLevelProgressionDataAsync(string levelProgressionName) {
+            string path = ResolveAssetPath(EAssetType.LevelProgression, levelProgressionName);
+            return await LoadAssetAsync<LevelProgressionData>(path);
+        }
+
+        // TODO: move to better place
         public static List<Sprite> GeneratePuzzlePieces(Texture2D illustration, int gridSize)
         {
             // make texture2d to rectangular texture2d and get the pixels
@@ -94,13 +130,17 @@ namespace SwapPuzzle.Services
 
         private static string ResolveAssetPath(EAssetType assetType, string assetName)
         {
+            string basePath = Paths[assetType] + assetName;
             switch (assetType)
             {
                 case EAssetType.Prefab:
-                    return Paths[assetType] + assetName + ".prefab";
+                    return basePath + ".prefab";
                 case EAssetType.LevelProgression:
+                case EAssetType.Level:
                 case EAssetType.GalleryProgression:
-                    return Paths[assetType] + assetName + ".asset";
+                case EAssetType.Gallery:
+                case EAssetType.Illustration:
+                    return basePath + ".asset";
                 default:
                     return null;
             }

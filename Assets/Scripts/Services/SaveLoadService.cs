@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using SwapPuzzle.Interfaces;
 using SwapPuzzle.Classes;
 using UnityEngine;
+using System;
 
 namespace SwapPuzzle.Services
 {
@@ -18,6 +19,20 @@ namespace SwapPuzzle.Services
         {
             {ERuntimeType.Progress, "progress" }, {ERuntimeType.Unlock, "unlock"}
         };
+
+        public static bool HasSavedProgress()
+        {
+            try
+            {
+                string value = PlayerPrefs.GetString(Paths[ERuntimeType.Progress], string.Empty);
+                if (value == null || String.IsNullOrEmpty(value)) return false;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         
         /// <summary>
         /// Saves player progress data to PlayerPrefs with error handling.
@@ -26,7 +41,7 @@ namespace SwapPuzzle.Services
         public static void SaveProgress(ProgressRuntime progress)
         {
             if (progress == null) return;
-            
+
             try
             {
                 string value = progress.Serialize();
@@ -54,7 +69,7 @@ namespace SwapPuzzle.Services
             catch (System.Exception e)
             {
                 Debug.LogError($"Failed to load progress: {e.Message}");
-                return new ProgressRuntime(string.Empty);
+                return null;
             }
         }
     }

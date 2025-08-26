@@ -1,9 +1,7 @@
 using System;
 using SwapPuzzle.Interfaces;
 using UnityEngine;
-using SwapPuzzle.AssetDefinitions;
 using SwapPuzzle.Classes;
-using SwapPuzzle.Services;
 
 namespace SwapPuzzle.MonoBehaviours
 {
@@ -34,20 +32,11 @@ namespace SwapPuzzle.MonoBehaviours
     {
         public static ProgressManager Instance { get; private set; }
 
-        [SerializeField] private string _easyLevelData;
-        [SerializeField] private string _mediumLevelData;
-        [SerializeField] private string _hardLevelData;
-
         /// <summary>
         /// runtime is initialized in entry point
         /// </summary>
         private ProgressRuntime _runtime;
-
-        /// <summary>
-        /// Level progression and level will be initialized from main menu right before transitioning to game scene
-        /// </summary>
-        private LevelProgressionData _currentLevelProgression;
-        private LevelData _currentLevel;
+        private ILevelProgressionData _levelProgressionData;
 
         public event Action OnProgressChange;
 
@@ -57,7 +46,6 @@ namespace SwapPuzzle.MonoBehaviours
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
-                Initialize();
             }
             else
             {
@@ -65,29 +53,26 @@ namespace SwapPuzzle.MonoBehaviours
             }
         }
 
-        private void Initialize()
+        public void InitializeProgress(ILevelProgressionData levelProgression)
         {
-            _runtime = SaveLoadService.LoadProgress();
-        }
+            // override existing runtime;
+            _runtime = new ProgressRuntime();
 
-        public void StartEasy()
-        {
+            // load progression data
+            _levelProgressionData = levelProgression;
 
-        }
+            // check validity of asset
+            if (_levelProgressionData.Levels == null || _levelProgressionData.Levels.Count == 0)
+            {
+                throw new Exception("Invalid: Malformed level progression data");
+            }
 
-        public void StartMedium()
-        {
+            // load first level
+            ILevelData firstLevel = _levelProgressionData.Levels[0];
+            _runtime.LogProgressStart(_levelProgressionData.Name, firstLevel.Name);
 
-        }
-
-        public void StartHard()
-        {
-
-        }
-
-        public void ContinueSaved()
-        {
-            
+            // emit progress change
+            OnProgressChange?.Invoke();
         }
 
         public ILevelData GetCurrentLevel()
@@ -97,24 +82,69 @@ namespace SwapPuzzle.MonoBehaviours
                 return null;
             }
 
+            if (_levelProgressionData == null || _levelProgressionData.Levels == null) return null;
 
+            string currentLevelName = _runtime.CurrentLevel();
+            for (int i = 0; i < _levelProgressionData.Levels.Count; i++)
+            {
+                if (_levelProgressionData.Levels[i].Name == currentLevelName) return _levelProgressionData.Levels[i];
+            }
 
-            return default;
+            throw new Exception("Invalid: level name doesn't exists");
         }
 
         public void CompleteCurrentLevel()
         {
+            if (_runtime == null)
+            {
+                throw new Exception("Invalid: runtime not exists");
+            }
+            _runtime.LogProgressComplete(_levelProgressionData.Name, _runtime.CurrentLevel());
+        }
 
+        private ILevelData FindNextLevel(string currentLevelName)
+        {
+            if (_levelProgressionData == null || _levelProgressionData.Levels == null) return null;
+
+            int i = 0;
+            for (i = 0; i < _levelProgressionData.Levels.Count; i++)
+            {
+                if (_levelProgressionData.Levels[i].Name == currentLevelName) break;
+            }
+
+            if (i + 1 < _levelProgressionData.Levels.Count) return _levelProgressionData.Levels[i + 1];
+            return null;
+        }
+
+        public bool HasNextLevel()
+        {
+            if (_runtime == null)
+            {
+                throw new Exception("Invalid: runtime not exists");
+            }
+            string levelName = _runtime.CurrentLevel();
+
+            if (levelName == null) return false;
+            if (FindNextLevel(levelName) == null) return false;
+            return true;
         }
 
         public void GoToNextLevel()
         {
+            if (_runtime == null)
+            {
+                throw new Exception("Invalid: runtime not exists");
+            }
+            string currentLevelName = _runtime.CurrentLevel();
 
-        }
+            if (currentLevelName == null)
+            {
+                throw new Exception("Invalid: current level should exists");
+            }
 
-        public void ResetProgress()
-        {
-
+            ILevelData nextLevel = FindNextLevel(currentLevelName);
+            _runtime.LogProgressStart(_levelProgressionData.Name, nextLevel.Name);
+            OnProgressChange?.Invoke();
         }
     }
 }

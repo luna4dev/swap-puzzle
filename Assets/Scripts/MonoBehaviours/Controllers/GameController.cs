@@ -66,7 +66,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void ReturnToMainMenu()
         {
-            ConfirmPopup.OpenPopup("Return to Main Menu", "Return to Main Menu", "Yes", "No", true, () =>
+            ConfirmPopup.OpenPopup("메인 메뉴로 돌아가기", "풀지 못한 퍼즐은 저장되지 않습니다. 메인 메뉴로 돌아가시겠습니까?", "네", "아니오", true, () =>
             {
                 SceneManager.Instance.LoadScene(ESceneType.MainMenu, ETransitionType.Fade);
             });

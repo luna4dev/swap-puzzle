@@ -17,6 +17,7 @@ namespace SwapPuzzle.AssetDefinitions
             get
             {
                 List<IGalleryData> list = new();
+                if (_galleries == null) return list;
                 foreach (GalleryData item in _galleries)
                 {
                     list.Add(item);
