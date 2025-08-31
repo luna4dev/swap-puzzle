@@ -9,7 +9,7 @@ namespace SwapPuzzle.Interfaces
         /// Initializes a new puzzle with the given level data
         /// </summary>
         /// <param name="levelData">The data for the level to initialize</param>
-        void InitializePuzzle(int levelId);
+        void InitializePuzzle(ILevelData levelData);
 
         /// <summary>
         /// Shuffles the puzzle pieces to start the game
@@ -32,5 +32,7 @@ namespace SwapPuzzle.Interfaces
         /// </summary>
         /// <returns>The number of solved pieces</returns>
         int GetSolvedPiecesCount();
+
+        void HandleSwap();
     }
 } 

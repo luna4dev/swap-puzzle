@@ -18,6 +18,7 @@ namespace SwapPuzzle.Services
         Gallery,
         Illustration,
         Prefab,
+        Popup,
     }
 
     public static class AssetService
@@ -27,6 +28,7 @@ namespace SwapPuzzle.Services
         public static Dictionary<EAssetType, string> Paths = new()
         {
             {EAssetType.Prefab, "Assets/Prefabs/"},
+            {EAssetType.Popup, "Assets/Prefabs/Popups/"},
             {EAssetType.LevelProgression, "Assets/Data/"},
             {EAssetType.Level, "Assets/Data/Levels/"},
             {EAssetType.GalleryProgression, "Assets/Data/"},
@@ -73,6 +75,12 @@ namespace SwapPuzzle.Services
         public static async Task<GameObject> GetPrefabAsync(string prefabName)
         {
             string path = ResolveAssetPath(EAssetType.Prefab, prefabName);
+            return await LoadAssetAsync<GameObject>(path);
+        }
+
+        public static async Task<GameObject> GetPopupAsync(string prefabName)
+        {
+            string path = ResolveAssetPath(EAssetType.Popup, prefabName);
             return await LoadAssetAsync<GameObject>(path);
         }
 
@@ -134,6 +142,7 @@ namespace SwapPuzzle.Services
             switch (assetType)
             {
                 case EAssetType.Prefab:
+                case EAssetType.Popup:
                     return basePath + ".prefab";
                 case EAssetType.LevelProgression:
                 case EAssetType.Level:

@@ -10,7 +10,9 @@ namespace SwapPuzzle.Interfaces
         /// Initializes the grid with the specified size
         /// </summary>
         /// <param name="size">The size of the grid (e.g., 3 for a 3x3 grid)</param>
-        void InitializeGrid(int size);
+        void InitializeGrid(IPuzzleController controller, int size);
+
+        void ClearGrid();
 
         /// <summary>
         /// Gets the puzzle piece at the specified grid position
@@ -34,8 +36,7 @@ namespace SwapPuzzle.Interfaces
         /// </summary>
         /// <param name="piece1">The first piece</param>
         /// <param name="piece2">The second piece</param>
-        /// <param anme="piece3">A flag to emit swap event</param>
-        void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2, bool emitEvent);
+        void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2);
 
         /// <summary>
         /// Handles the selection of a piece by the player

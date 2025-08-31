@@ -1,5 +1,6 @@
 using UnityEngine;
 using SwapPuzzle.Interfaces;
+using System.Collections;
 
 namespace SwapPuzzle.MonoBehaviours
 {
@@ -9,9 +10,12 @@ namespace SwapPuzzle.MonoBehaviours
         public string ContextName => "Game";
         public int Priority => 1;
 
+        [SerializeField] private PuzzleController _puzzleController;
+
         private void OnEnable()
         {
             InputContextManager.Instance.OnContextChanged += HandleContextChange;
+            StartCoroutine(StartLevel());
         }
 
         private void OnDisable()
@@ -63,6 +67,25 @@ namespace SwapPuzzle.MonoBehaviours
         {
             throw new System.NotImplementedException();
         }
+
+        /// <summary>
+        /// A function to start a level,
+        /// - Start animations
+        /// - load of level
+        /// - etc
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator StartLevel()
+        {
+            // load level
+            ILevelData level = MasterGameManager.Instance.GetCurrentLevelData();
+            _puzzleController.InitializePuzzle(level);
+
+            StartCoroutine(LevelStartPopup.PlayPopup(level.Name));
+
+            yield break;
+        }
+
 
         public void ReturnToMainMenu()
         {

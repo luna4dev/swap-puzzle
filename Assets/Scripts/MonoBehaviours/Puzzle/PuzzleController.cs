@@ -7,41 +7,23 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {
-        private bool _initialized;
         private IShuffler _shuffler;
         [SerializeField] private PuzzleGrid _puzzleGrid;
         [SerializeField] private PuzzleSpriteProvider _spriteProvider;
         // TODO: remove before release
         [SerializeField] private LevelData MockupLevelData;
 
-        public void OnEnable()
-        {
-            if (_initialized == false) return;
-
-            _puzzleGrid.OnSwap += HandleSwap;
-        }
-
-        public void OnDisable()
-        {
-            _puzzleGrid.OnSwap -= HandleSwap;
-        }
-
-        public void InitializePuzzle(int levelId)
+        public void InitializePuzzle(ILevelData level)
         {
             _shuffler = new ControlledPlacement();
 
-            // TODO: remove mockup
-            LevelData levelData = MockupLevelData;
-            _puzzleGrid.InitializeGrid(levelData.GridSize);
-            _puzzleGrid.OnSwap += HandleSwap;
-            RenderSpriteToPuzzlePieces(levelData);
-            ShufflePieces(levelData.PresolvedPieces);
+            _puzzleGrid.InitializeGrid(this, level.GridSize);
+            RenderSpriteToPuzzlePieces(level);
+            ShufflePieces(level.PresolvedPieces);
             CheckSolution();
-
-            _initialized = true;
         }
 
-        public void RenderSpriteToPuzzlePieces(LevelData levelData)
+        public void RenderSpriteToPuzzlePieces(ILevelData levelData)
         {
             if (_spriteProvider == null)
             {
@@ -67,7 +49,9 @@ namespace SwapPuzzle.MonoBehaviours
         public void HandleSwap()
         {
             CheckSolution();
-            IsLevelComplete();
+            bool completed = IsLevelComplete();
+
+            if (completed) Debug.Log("yay");
         }
 
         public void CheckSolution()

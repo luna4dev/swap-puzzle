@@ -30,6 +30,11 @@ namespace SwapPuzzle.MonoBehaviours
             popup.Initialize(title, description, confrimText, cancelText, blockBackground, onConfirm, onCancel);
         }
 
+        public void InitializePopup()
+        {
+
+        }
+
         public void Initialize(
             string title, string description,
             string confrimText = "확인", string cancelText = "취소", bool blockBackground = true,

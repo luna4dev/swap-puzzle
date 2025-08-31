@@ -6,52 +6,57 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzleGrid : MonoBehaviour, IPuzzleGrid
     {
-        public event Action OnSwap;
 
         /// <summary>
         /// a length and height of the puzzle piece
         /// </summary>
-        private float puzzlePieceSize;
-        private IPuzzlePiece[][] grid;
+        private float _puzzlePieceSize;
+        private IPuzzlePiece[][] _grid;
+        private IPuzzleController _controller;
+
         [SerializeField] private PuzzlePiece piecePrefab;
 
-        public void InitializeGrid(int _gridSize)
+        public void InitializeGrid(IPuzzleController controller, int _gridSize)
         {
-            if (!Application.isPlaying)
-            {
-                Debug.LogWarning("Only in play mode");
-                return;
-            }
+            _controller = controller;
 
             // initialize grid 2d list 
-            grid = new IPuzzlePiece[_gridSize][];
+            _grid = new IPuzzlePiece[_gridSize][];
             for (int i = 0; i < _gridSize; i++)
             {
-                grid[i] = new IPuzzlePiece[_gridSize];
+                _grid[i] = new IPuzzlePiece[_gridSize];
             }
 
             InitializePuzzlePieces();
         }
 
+        public void ClearGrid()
+        {
+            foreach (Transform child in transform)
+            {
+                child.gameObject.SetActive(false);
+            }
+        }
+
         public IPuzzlePiece GetPieceAt(int x, int y)
         {
-            return grid[y][x];
+            return _grid[y][x];
         }
 
         public void SetPieceAt(int x, int y, IPuzzlePiece _piece)
         {
             if (_piece is PuzzlePiece piece)
             {
-                float offset = grid.Length % 2 == 0 ? puzzlePieceSize / 2 : 0;
-                float rectX = puzzlePieceSize * (x - grid.Length / 2) + offset;
-                float rectY = -(puzzlePieceSize * (y - grid.Length / 2) + offset);
+                float offset = _grid.Length % 2 == 0 ? _puzzlePieceSize / 2 : 0;
+                float rectX = _puzzlePieceSize * (x - _grid.Length / 2) + offset;
+                float rectY = -(_puzzlePieceSize * (y - _grid.Length / 2) + offset);
                 piece.GetComponent<RectTransform>().localPosition = new(rectX, rectY);
 
-                grid[y][x] = _piece;
+                _grid[y][x] = _piece;
             }
         }
 
-        public void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2, bool emitEvent = false)
+        public void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2)
         {
             (int piece1X, int piece1Y) = GetCoord(piece1);
             if (piece1X == -1) return;
@@ -62,7 +67,7 @@ namespace SwapPuzzle.MonoBehaviours
             SetPieceAt(piece1X, piece1Y, piece2);
             SetPieceAt(piece2X, piece2Y, piece1);
 
-            if (emitEvent) OnSwap.Invoke();
+            if (_controller != null) _controller.HandleSwap();
         }
 
         public void HandlePieceSelection(IPuzzlePiece selectedPiece)
@@ -94,18 +99,18 @@ namespace SwapPuzzle.MonoBehaviours
 
         public int GetGridSize()
         {
-            return grid.Length;
+            return _grid.Length;
         }
 
         private (int, int) GetCoord(IPuzzlePiece _piece)
         {
             if (_piece is PuzzlePiece piece)
             {
-                for (int y = 0; y < grid.Length; y++)
+                for (int y = 0; y < _grid.Length; y++)
                 {
-                    for (int x = 0; x < grid[y].Length; x++)
+                    for (int x = 0; x < _grid[y].Length; x++)
                     {
-                        if (grid[y][x].Equals(piece)) return (x, y);
+                        if (_grid[y][x].Equals(piece)) return (x, y);
                     }
                 }
             }
@@ -115,7 +120,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void InitializePuzzlePieces()
         {
-            if (grid == null || grid.Length <= 0)
+            if (_grid == null || _grid.Length <= 0)
             {
                 Debug.LogWarning("GridSize not properly initialized");
                 return;
@@ -124,10 +129,10 @@ namespace SwapPuzzle.MonoBehaviours
             // set size of the puzzle piece
             RectTransform rectTransform = GetComponent<RectTransform>();
             float areaLength = rectTransform.sizeDelta.x;
-            puzzlePieceSize = areaLength / grid.Length;
+            _puzzlePieceSize = areaLength / _grid.Length;
 
             // set desired number of puzzle pieces
-            int newGridItemCount = grid.Length * grid.Length;
+            int newGridItemCount = _grid.Length * _grid.Length;
             int existingGridItemCount = 0;
 
             foreach (Transform child in transform)
@@ -155,11 +160,11 @@ namespace SwapPuzzle.MonoBehaviours
             {
                 // initialize piece object
                 PuzzlePiece piece = child.GetComponent<PuzzlePiece>();
-                piece.Initialize(x, y, x + y * grid.Length + 1);
+                piece.Initialize(x, y, x + y * _grid.Length + 1);
 
                 // initialize piece rect transform
                 RectTransform rect = piece.GetComponent<RectTransform>();
-                rect.sizeDelta = new Vector2(puzzlePieceSize, puzzlePieceSize);
+                rect.sizeDelta = new Vector2(_puzzlePieceSize, _puzzlePieceSize);
 
                 // set piece position
                 SetPieceAt(x, y, piece);
@@ -171,12 +176,12 @@ namespace SwapPuzzle.MonoBehaviours
 
                 child.gameObject.SetActive(true);
                 x++;
-                if (x >= grid.Length)
+                if (x >= _grid.Length)
                 {
                     x = 0;
                     y++;
                 }
-                if (y >= grid.Length) break;
+                if (y >= _grid.Length) break;
             }
         }
 
@@ -191,7 +196,7 @@ namespace SwapPuzzle.MonoBehaviours
             if (!CanSwapPieces(dropped, dropTarget)) return;
 
             // swap
-            InitiateSwap(dropped, dropTarget, true);
+            InitiateSwap(dropped, dropTarget);
         }
     }
 }

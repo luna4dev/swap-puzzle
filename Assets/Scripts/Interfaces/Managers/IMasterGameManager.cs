@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SwapPuzzle.Interfaces
 {
@@ -21,7 +22,14 @@ namespace SwapPuzzle.Interfaces
     public interface IMasterGameManager
     {
         event Action OnStateChange;
+        List<IClockSyncedComponent> ClockSyncedComponents { get; }
         EPlayState PlayState { get; }
         EDifficulty Difficulty { get; }
+    }
+
+    public interface IClockSyncedComponent
+    {
+        bool IsTimeSynced { get; }
+        void OnTimeUpdate(float deltaTime);
     }
 }

@@ -5,6 +5,7 @@ using SwapPuzzle.Services;
 using SwapPuzzle.AssetDefinitions;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace SwapPuzzle.MonoBehaviours
 {
@@ -14,7 +15,9 @@ namespace SwapPuzzle.MonoBehaviours
         public EPlayState PlayState { get; private set; } = EPlayState.Initialize;
         public EDifficulty Difficulty { get; private set; } = EDifficulty.None;
         public event Action OnStateChange;
+        public List<IClockSyncedComponent> ClockSyncedComponents { get; } = new();
 
+        [SerializeField] private float _timeScale = 1f;
         [SerializeField] private string _easyLevelDataKey;
         [SerializeField] private string _mediumLevelDataKey;
         [SerializeField] private string _hardLevelDataKey;
@@ -29,6 +32,22 @@ namespace SwapPuzzle.MonoBehaviours
             else
             {
                 Destroy(gameObject);
+            }
+        }
+
+        private void Update()
+        {
+            // if paused or blocked, 
+            if (PlayState == EPlayState.Block || PlayState == EPlayState.Pause) return;
+
+            // update time for all synced component except off flags
+            float adjustedDeltaTime = Time.deltaTime * _timeScale;
+            foreach (IClockSyncedComponent component in ClockSyncedComponents)
+            {
+                if (component.IsTimeSynced)
+                {
+                    component.OnTimeUpdate(adjustedDeltaTime);
+                }
             }
         }
 
@@ -65,6 +84,11 @@ namespace SwapPuzzle.MonoBehaviours
         public void ContinuePreviousGame()
         {
 
+        }
+
+        public ILevelData GetCurrentLevelData()
+        {
+            return ProgressManager.Instance.GetCurrentLevel();
         }
 
     }

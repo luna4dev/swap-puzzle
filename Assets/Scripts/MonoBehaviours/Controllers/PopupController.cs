@@ -32,10 +32,10 @@ namespace SwapPuzzle.MonoBehaviours
             Instance = null;
         }
 
-        public async Task<T> OpenPopup<T>() where T: IPopup
+        public async Task<T> OpenPopup<T>() where T : IPopup
         {
             System.Type popupType = typeof(T);
-            
+
             // Check if popup already exists
             if (_popupDictionary.TryGetValue(popupType, out IPopup existingPopup))
             {
@@ -44,31 +44,40 @@ namespace SwapPuzzle.MonoBehaviours
                 {
                     mb.gameObject.SetActive(true);
                 }
+
+                // initialize
+                existingPopup.InitializePopup();
                 return (T)existingPopup;
             }
-            
+
             // Create new popup instance
-            string popupName = "/Popups/" + popupType.Name;
-            GameObject prefab = await AssetService.GetPrefabAsync(popupName);
+            GameObject prefab = await AssetService.GetPopupAsync(popupType.Name);
             GameObject popupInstance = Instantiate(prefab, transform);
             Component[] components = popupInstance.GetComponents(typeof(IPopup));
-            
+
+            T popup = default;
             for (int i = 0; i < components.Length; i++)
             {
-                if (components[i] is T popup)
+                if (components[i] is T foundPopup)
                 {
-                    _popupDictionary[popupType] = popup;
-                    return popup;
+                    popup = foundPopup;
                 }
             }
-            
-            throw new System.Exception("Popup " + popupName + " is not properly configured: IPopup not exists");
+
+            if (popup != null)
+            {
+                _popupDictionary[popupType] = popup;
+                popup.InitializePopup();
+                return popup;
+            }
+
+            throw new System.Exception("Popup " + popupType.Name + " is not properly configured: IPopup not exists");
         }
 
         public void ClosePopup(IPopup popup)
         {
             if (popup == null) return;
-            
+
             // Deactivate popup instead of destroying
             if (popup is MonoBehaviour mb)
             {
