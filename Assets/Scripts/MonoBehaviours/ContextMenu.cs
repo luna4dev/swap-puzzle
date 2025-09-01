@@ -28,11 +28,18 @@ namespace SwapPuzzle.MonoBehaviours
 
     public class ContextMenu : MonoBehaviour
     {
+        [SerializeField] Animator _animator;
+        private const string BOOL_CLOSED = "Closed";
+
         [SerializeField] Button MuteAllButton;
         [SerializeField] Button EffectOnlyButton;
         [SerializeField] Button PlayAllSoundButton;
         [SerializeField] Button BackButton;
         [SerializeField] Button CloseButton;
+
+        private bool _closed = false;
+
+        public static ContextMenu Current = null;
 
         // TODO: move this config to user preference after it is implemented;
         private ESoundPreference _soundPreference = ESoundPreference.PlayAll;
@@ -51,6 +58,7 @@ namespace SwapPuzzle.MonoBehaviours
             {
                 InputContextManager.Instance.OnContextChanged += HandleContextChange;
             }
+            Current = this;
         }
 
         private void OnDisable()
@@ -59,6 +67,21 @@ namespace SwapPuzzle.MonoBehaviours
             {
                 InputContextManager.Instance.OnContextChanged -= HandleContextChange;
             }
+            Current = null;
+        }
+
+        public void Collapse()
+        {
+            if (_closed == true) return;
+            _closed = true;
+            _animator.SetBool(BOOL_CLOSED, _closed);
+        }
+
+        public void Inflate()
+        {
+            if (_closed == false) return;
+            _closed = false;
+            _animator.SetBool(BOOL_CLOSED, _closed);
         }
 
         private void HandleContextChange()

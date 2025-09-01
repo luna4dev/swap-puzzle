@@ -54,6 +54,25 @@ namespace SwapPuzzle.MonoBehaviours
             OnContextChanged?.Invoke();
         }
 
+        public bool RemoveContext(IInputContext inputContext)
+        {
+            if (_contextStack.Count > 0)
+            {
+                for (int i = 0; i < _contextStack.Count; i++)
+                {
+                    if (ReferenceEquals(_contextStack[i], inputContext))
+                    {
+                        _contextStack.RemoveAt(i);
+                        break;
+                    }
+                }
+                CurrentContext = _contextStack.Count > 0 ? _contextStack[_contextStack.Count - 1] : null;
+                OnContextChanged?.Invoke();
+                return true;
+            }
+            return false;
+        }
+
         public bool PopContext()
         {
             if (_contextStack.Count > 0)

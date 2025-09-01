@@ -633,15 +633,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1924508138657970743, guid: 58c931ac28ab043beb91d924a49211d5, type: 3}
       propertyPath: m_Color.b
-      value: 0.76366943
+      value: 0.41504487
       objectReference: {fileID: 0}
     - target: {fileID: 1924508138657970743, guid: 58c931ac28ab043beb91d924a49211d5, type: 3}
       propertyPath: m_Color.g
-      value: 0.8117647
+      value: 0.4433962
       objectReference: {fileID: 0}
     - target: {fileID: 1924508138657970743, guid: 58c931ac28ab043beb91d924a49211d5, type: 3}
       propertyPath: m_Color.r
-      value: 0.6
+      value: 0.31581524
       objectReference: {fileID: 0}
     - target: {fileID: 4260179848200120253, guid: 58c931ac28ab043beb91d924a49211d5, type: 3}
       propertyPath: m_Name

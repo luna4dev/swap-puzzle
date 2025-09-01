@@ -13,18 +13,21 @@ namespace SwapPuzzle.MonoBehaviours
         public void SetImage(Sprite sprite)
         {
             _image.sprite = sprite;
+            _debugText.gameObject.SetActive(false);
             SetDebugTextColor();
         }
 
-        public void SetSolvedState(bool isSolved)
+        public void SetEnabled()
         {
-            if (isSolved)
-                _image.color = Color.gray;
-            else
-                _image.color = Color.white;
+            _image.color = Color.white;
         }
 
-        public void SetDebugText(bool enabled, int order = 0)
+        public void SetDisabled()
+        {
+            _image.color = Color.gray;
+        }
+
+        public void SetDebug(bool enabled, int order = 0)
         {
             if (enabled)
             {

@@ -65,12 +65,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'All
-
-    Sound'
+  m_text: "\uC0AC\uC6B4\uB4DC"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
+  m_sharedMaterial: {fileID: 5302719370843669696, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -203,10 +201,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Close
+  m_text: "\uB2EB\uAE30"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
+  m_sharedMaterial: {fileID: 5302719370843669696, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -417,6 +415,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1624036980946990219}
   - component: {fileID: 1565924078123805828}
+  - component: {fileID: 4245405103032093832}
   m_Layer: 5
   m_Name: ContextMenu
   m_TagString: Untagged
@@ -456,11 +455,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d7e87488eef446f19b5bdf74057280a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 4245405103032093832}
   MuteAllButton: {fileID: 2302543493693696927}
   EffectOnlyButton: {fileID: 7869626937586627167}
   PlayAllSoundButton: {fileID: 3211839170119211232}
   BackButton: {fileID: 5660573129344361960}
   CloseButton: {fileID: 2649612973037392362}
+--- !u!95 &4245405103032093832
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3153981727648849498}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fe22c96dfe86b4a71b0ec2a1e53b2cfa, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3441434821850424909
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,10 +548,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Muted
+  m_text: "\uC74C\uC18C\uAC70"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
+  m_sharedMaterial: {fileID: 5302719370843669696, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1060,7 +1082,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0.69612455, a: 0.7294118}
+  m_Color: {r: 0.509434, g: 0, b: 0.35560483, a: 0.7294118}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1168,10 +1190,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Back
+  m_text: "\uB4A4\uB85C\uAC00\uAE30"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
+  m_sharedMaterial: {fileID: 5302719370843669696, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1437,12 +1459,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Only
-
-    Effect'
+  m_text: "\uD6A8\uACFC\uC74C\nOnly"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
+  m_sharedMaterial: {fileID: 5302719370843669696, guid: 324b4df8fd98b6046b8b5f4308e7e74f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

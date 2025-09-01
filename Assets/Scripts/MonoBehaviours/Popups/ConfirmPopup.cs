@@ -26,7 +26,7 @@ namespace SwapPuzzle.MonoBehaviours
             UnityAction onConfirm = null, UnityAction onCancel = null
         )
         {
-            ConfirmPopup popup = await PopupController.Instance.OpenPopup<ConfirmPopup>();
+            ConfirmPopup popup = await PopupController.Current.OpenPopup<ConfirmPopup>();
             popup.Initialize(title, description, confrimText, cancelText, blockBackground, onConfirm, onCancel);
         }
 
@@ -66,7 +66,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void ClosePopup()
         {
-            PopupController.Instance.ClosePopup(this);
+            PopupController.Current.ClosePopup(this);
         }
 
         private bool CanHandleInput(InputType inputType)

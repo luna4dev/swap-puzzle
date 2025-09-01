@@ -8,28 +8,18 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class PopupController : MonoBehaviour, IPopupController
     {
-        public static PopupController Instance { get; private set; }
+        public static PopupController Current = null;
 
         private Dictionary<System.Type, IPopup> _popupDictionary = new();
 
-        private void Awake()
+        private void OnEnable()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-
-            if (!ReferenceEquals(this, Instance))
-            {
-                PopupController prev = Instance;
-                Instance = this;
-                Destroy(prev);
-            }
+            Current = this;
         }
 
         private void OnDestroy()
         {
-            Instance = null;
+            Current = null;
         }
 
         public async Task<T> OpenPopup<T>() where T : IPopup
@@ -64,14 +54,18 @@ namespace SwapPuzzle.MonoBehaviours
                 }
             }
 
-            if (popup != null)
+            // handle exception
+            if (popup == null)
             {
-                _popupDictionary[popupType] = popup;
-                popup.InitializePopup();
-                return popup;
+                throw new System.Exception("Popup " + popupType.Name + " is not properly configured: IPopup not exists");
             }
 
-            throw new System.Exception("Popup " + popupType.Name + " is not properly configured: IPopup not exists");
+            _popupDictionary[popupType] = popup;
+            popup.InitializePopup();
+
+            InputContextManager.Instance.PushContext(popup);
+
+            return popup;
         }
 
         public void ClosePopup(IPopup popup)
@@ -82,6 +76,12 @@ namespace SwapPuzzle.MonoBehaviours
             if (popup is MonoBehaviour mb)
             {
                 mb.gameObject.SetActive(false);
+            }
+
+            // remove from context
+            if (popup is IInputContext ic)
+            {
+                InputContextManager.Instance.RemoveContext(ic);
             }
         }
 

@@ -16,9 +16,11 @@ namespace SwapPuzzle.MonoBehaviours
         [SerializeField] private Image _image;
         [SerializeField] private TMP_Text _levelDisplayText;
 
+        private const string PLAYFADE_TRIGGER = "PlayFade";
+
         public static IEnumerator PlayPopup(string levelDisplayName)
         {
-            Task<LevelStartPopup> taskHandle = PopupController.Instance.OpenPopup<LevelStartPopup>();
+            Task<LevelStartPopup> taskHandle = PopupController.Current.OpenPopup<LevelStartPopup>();
 
             while (!taskHandle.IsCompleted)
             {
@@ -35,32 +37,15 @@ namespace SwapPuzzle.MonoBehaviours
         public void PlayLevelStartPopup(string levelDisplayName)
         {
             _levelDisplayText.text = levelDisplayName;
-            StartCoroutine(PlayFadeSequence());
-        }
 
-        private IEnumerator PlayFadeSequence()
-        {
-            Debug.Log("wait for 3");
-            yield return new WaitForSeconds(3f);
-            Debug.Log("Play fade");
-
-            _animator.SetBool("Play", true);
-
-            // Wait for FadeOut to complete
-            yield return new WaitForSeconds(3f);
-
-            Debug.Log("Completed");
-
-            // Close popup after animation completes
-            // ClosePopup();
+            // Reset any existing triggers with the same name (optional)
+            _animator.ResetTrigger(PLAYFADE_TRIGGER);
+            // Set the new trigger
+            _animator.SetTrigger(PLAYFADE_TRIGGER);
         }
 
         public void InitializePopup()
         {
-            _animator.SetBool("Play", false);
-            _animator.Play("Hidden", -1, 0f);
-            _animator.speed = 1f;
-
             _image.color = new Color(
                 _image.color.r,
                 _image.color.g,
@@ -77,7 +62,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void ClosePopup()
         {
-            PopupController.Instance.ClosePopup(this);
+            PopupController.Current.ClosePopup(this);
         }
 
         public bool HandleInput(InputType inputType, InputData inputData)

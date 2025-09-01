@@ -7,7 +7,6 @@ namespace SwapPuzzle.Interfaces
     /// </summary>
     public interface IPuzzlePiece
     {
-        IPuzzlePieceRenderer Renderer { get; }
         /// <summary>
         /// The original X position in the grid
         /// </summary>
@@ -18,14 +17,16 @@ namespace SwapPuzzle.Interfaces
         /// </summary>
         int OriginalY { get; }
 
-        /// <summary>
-        /// Whether the piece is in its correct position
-        /// </summary>
-        bool IsSolved { get; set; }
+        bool IsSolved { get; }
 
-        /// <summary>
-        /// Marks the piece as solved
-        /// </summary>
-        void MarkAsSolved();
+        void SetPrestine();
+
+        void SetSolved();
+
+        void SetLevelCompleted();
+
+        void SetImage(Sprite image);
+
+        void SetDebug(bool debug);
     }
 } 

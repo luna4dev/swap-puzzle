@@ -7,43 +7,52 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzlePiece : MonoBehaviour, IPuzzlePiece
     {
+        [SerializeField] private UIDragDrop _uiDragDrop;
         [SerializeField] private PuzzlePieceRenderer _renderer;
         public IPuzzlePieceRenderer Renderer { get { return _renderer; } }
         public int OriginalX { get; private set; }
         public int OriginalY { get; private set; }
-        private bool _isSolved;
-        public bool IsSolved
-        {
-            get { return _isSolved; }
-            set
-            {
-                Renderer.SetSolvedState(value);
-                _isSolved = value;
-            }
-        }
 
-        public void Initialize(int originalX, int originalY, int order = -1)
+        public bool IsSolved { get; private set; }
+        private int _displayNumber = 0;
+
+        public void Initialize(int originalX, int originalY, int displayNumber)
         {
             OriginalX = originalX;
             OriginalY = originalY;
+            _displayNumber = displayNumber;
+            SetPrestine();
+        }
+
+        public void SetPrestine()
+        {
+            _uiDragDrop.enabled = true;
+            _renderer.SetEnabled();
             IsSolved = false;
-            if (order > 0) SetDebug(true, order);
-            else SetDebug(false);
         }
 
-        public void SetDebug(bool debug, int order = 0)
+        public void SetSolved()
         {
-            Renderer.SetDebugText(debug, order);
-        }
-
-        public void MarkAsSolved()
-        {
+            _uiDragDrop.enabled = false;
+            _renderer.SetDisabled();
             IsSolved = true;
         }
 
-        public void OnPieceSelected()
+        public void SetLevelCompleted()
         {
+            _uiDragDrop.enabled = false;
+            _renderer.SetEnabled();
+            IsSolved = true;
+        }
 
+        public void SetImage(Sprite image)
+        {
+            _renderer.SetImage(image);
+        }
+
+        public void SetDebug(bool debug)
+        {
+            Renderer.SetDebug(debug, _displayNumber);
         }
     }
 }

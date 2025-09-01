@@ -6,6 +6,7 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class GameController : MonoBehaviour, IGameController
     {
+        public static GameController Current = null;
         public ESceneType Type => ESceneType.Game;
         public string ContextName => "Game";
         public int Priority => 1;
@@ -14,13 +15,25 @@ namespace SwapPuzzle.MonoBehaviours
 
         private void OnEnable()
         {
+            if (InputContextManager.Instance == null)
+            {
+                Debug.LogWarning("InputContextManager is disabled");
+                return;
+            }
             InputContextManager.Instance.OnContextChanged += HandleContextChange;
+            Current = this;
             StartCoroutine(StartLevel());
         }
 
         private void OnDisable()
         {
+            if (InputContextManager.Instance == null)
+            {
+                Debug.LogWarning("InputContextManager is disabled");
+                return;
+            }
             InputContextManager.Instance.OnContextChanged -= HandleContextChange;
+            Current = null;
         }
 
         public void InitializeScene()
