@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7f1b10d12d1145e78717f375bc4baf2, type: 3}
   m_Name: TestEasyLevels
   m_EditorClassIdentifier: 
-  _id: 0
   _isTest: 1
-  _difficulty: 0
   _levels:
   - {fileID: 11400000, guid: 6acc9fe9e306642368645f3b7c14588e, type: 2}
   - {fileID: 11400000, guid: 6669c9aa007cb474185e4a5e9f2ad766, type: 2}
   - {fileID: 11400000, guid: 99016525759b9423db3070d50b0ae2dd, type: 2}
+  - {fileID: 11400000, guid: b193225c87bba4152ac093249b1e141d, type: 2}

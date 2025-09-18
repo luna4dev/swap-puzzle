@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: TestLevel_Easy_3
   m_EditorClassIdentifier: 
   _illustration: {fileID: 11400000, guid: 508c7b1a48232485db2e7fce9ac0676f, type: 2}
-  _gridSize: 4
-  _presolvedPieces: 3
+  _gridSize: 7
+  _presolvedPieces: 14

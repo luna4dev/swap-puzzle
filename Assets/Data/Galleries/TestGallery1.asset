@@ -14,4 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _illustrations:
   - {fileID: 11400000, guid: 6f9e71652dfea48288a2443001c8fe0f, type: 2}
-  - {fileID: 11400000, guid: 009b704efaaad4ae58e030d970b9a0d7, type: 2}
