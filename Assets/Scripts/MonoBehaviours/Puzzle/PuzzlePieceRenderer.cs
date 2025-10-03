@@ -10,6 +10,31 @@ namespace SwapPuzzle.MonoBehaviours
         [SerializeField] private Image _image;
         [SerializeField] private TMP_Text _debugText;
 
+        private Material _imageMatInstance;
+        public Material ImageMatInstance
+        {
+            get
+            {
+                if (_imageMatInstance == null)
+                {
+                    _imageMatInstance = new Material(_image.material);
+                    _image.material = _imageMatInstance;
+                }
+                return _imageMatInstance;
+            }
+        }
+
+        public const string MAT_PHOTOFRAME_BORDER_RADIUS = "_BorderRadius";
+        public const float PUZZLE_BORDER_RADIUS = 0.2f;
+
+        void OnDestroy()
+        {
+            if (_imageMatInstance != null)
+            {
+                Destroy(_imageMatInstance);
+            }
+        }
+
         public void SetImage(Sprite sprite)
         {
             _image.sprite = sprite;
@@ -20,11 +45,13 @@ namespace SwapPuzzle.MonoBehaviours
         public void SetEnabled()
         {
             _image.color = Color.white;
+            ImageMatInstance.SetFloat(MAT_PHOTOFRAME_BORDER_RADIUS, PUZZLE_BORDER_RADIUS);
         }
 
         public void SetDisabled()
         {
             _image.color = Color.gray;
+            ImageMatInstance.SetFloat(MAT_PHOTOFRAME_BORDER_RADIUS, 0f);
         }
 
         public void SetDebug(bool enabled, int order = 0)

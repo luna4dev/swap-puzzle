@@ -73,6 +73,8 @@ Shader "Unlit/PhotoFrame"
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
                 col.a = border_radius_alpha(i.uv);
+                col *= i.color;
+
                 return col;
             }
             ENDCG
