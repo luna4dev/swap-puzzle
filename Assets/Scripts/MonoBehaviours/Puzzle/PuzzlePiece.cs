@@ -10,16 +10,14 @@ namespace SwapPuzzle.MonoBehaviours
         [SerializeField] private UIDragDrop _uiDragDrop;
         [SerializeField] private PuzzlePieceRenderer _renderer;
         public IPuzzlePieceRenderer Renderer { get { return _renderer; } }
-        public int OriginalX { get; private set; }
-        public int OriginalY { get; private set; }
+        public Vector2Int OriginalPos { get; private set; }
 
         public bool IsSolved { get; private set; }
         private int _displayNumber = 0;
 
         public void Initialize(int originalX, int originalY, int displayNumber)
         {
-            OriginalX = originalX;
-            OriginalY = originalY;
+            OriginalPos = new Vector2Int(originalX, originalY);
             _displayNumber = displayNumber;
             SetPrestine();
         }

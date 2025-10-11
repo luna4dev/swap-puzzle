@@ -31,7 +31,7 @@ Material:
     m_Floats:
     - _RimWidth: 0.59
     - _ScanIntensity: 1
-    - _Speed: 0.46
+    - _Speed: 0.31
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

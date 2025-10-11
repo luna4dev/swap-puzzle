@@ -29,8 +29,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _LensSize: 0.39
-    - _ReflectionIntensity: 0.36
+    - _LensSize: 0.38
+    - _ReflectionIntensity: 0.82
     - _RimWidth: 0.1
     m_Colors:
     - _Center: {r: 0.49, g: 0.47, b: 0.21, a: 0.4}

@@ -106,7 +106,7 @@ namespace SwapPuzzle.Utilities
                 Vector2Int targetPosition = positions[arrangement[i]];
                 
                 // Double-check this piece won't be in its correct position
-                if (targetPosition.x == piece.OriginalX && targetPosition.y == piece.OriginalY)
+                if (targetPosition.x == piece.OriginalPos.x && targetPosition.y == piece.OriginalPos.y)
                 {
                     // Find a safe position by swapping with next piece
                     int nextIndex = (arrangement[i] + 1) % pieces.Count;

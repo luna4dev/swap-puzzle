@@ -19,7 +19,7 @@ namespace SwapPuzzle.Interfaces
         /// <summary>
         /// Checks if the current puzzle state is a solution
         /// </summary>
-        void CheckSolution();
+        void CheckSolutionAndMarkScore(bool notifyScore);
 
         /// <summary>
         /// Checks if the current level is complete

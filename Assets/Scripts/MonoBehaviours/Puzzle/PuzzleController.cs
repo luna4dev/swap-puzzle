@@ -10,6 +10,7 @@ namespace SwapPuzzle.MonoBehaviours
         private IShuffler _shuffler;
         [SerializeField] private PuzzleGrid _puzzleGrid;
         [SerializeField] private PuzzleSpriteProvider _spriteProvider;
+        [SerializeField] private PuzzleScoreSystem _scoreSystem;
 
         private bool _debugMode = false;
 
@@ -39,7 +40,7 @@ namespace SwapPuzzle.MonoBehaviours
             _puzzleGrid.InitializeGrid(this, level.GridSize);
             RenderSpriteToPuzzlePieces(level);
             ShufflePieces(level.PresolvedPieces);
-            CheckSolution();
+            CheckSolutionAndMarkScore();
             SetDebug(_debugMode);
         }
 
@@ -47,7 +48,7 @@ namespace SwapPuzzle.MonoBehaviours
         {
             if (_spriteProvider == null)
             {
-                throw new System.Exception("Sprite Renderer not found");
+                throw new Exception("Sprite Renderer not found");
             }
             _spriteProvider.Initialize(levelData.Illustration.Illustration, levelData.GridSize);
 
@@ -80,11 +81,11 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void HandleSwap()
         {
-            CheckSolution();
+            CheckSolutionAndMarkScore(true);
             bool completed = IsLevelComplete();
 
             if (!completed) return;
-
+            _scoreSystem.Notify(EPuzzleSolveType.PuzzleWin);
             ILevelData currentLevel = ProgressManager.Instance.GetCurrentLevel();
             bool hasNextLevel = ProgressManager.Instance.HasNextLevel();
             ProgressManager.Instance.CompleteCurrentLevel();
@@ -92,20 +93,31 @@ namespace SwapPuzzle.MonoBehaviours
             StartCoroutine(LevelCompletePopup.OpenPopup(currentLevel, hasNextLevel));
         }
 
-        public void CheckSolution()
+        public void CheckSolutionAndMarkScore(bool notifyScore = false)
         {
             int gridSize = _puzzleGrid.GetGridSize();
+
+            int solveCount = 0;
             for (int y = 0; y < gridSize; y++)
             {
                 for (int x = 0; x < gridSize; x++)
                 {
                     IPuzzlePiece piece = _puzzleGrid.GetPieceAt(x, y);
-                    if (x == piece.OriginalX && y == piece.OriginalY)
+                    if (x == piece.OriginalPos.x && y == piece.OriginalPos.y)
                     {
                         piece.SetSolved();
+                        solveCount++;
                     }
                 }
             }
+
+            if (!notifyScore) return;
+
+            Debug.Log(solveCount);
+
+            if (solveCount == 0) _scoreSystem.Notify(EPuzzleSolveType.Fail);
+            if (solveCount == 1) _scoreSystem.Notify(EPuzzleSolveType.SolveOne);
+            if (solveCount == 2) _scoreSystem.Notify(EPuzzleSolveType.SolveBoth);
         }
 
         public bool IsLevelComplete()

@@ -29,9 +29,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BorderRadius: 0.087
+    - _BorderRadius: 0.237
     - _UOffset: 0.42
     - _VOffset: 0.55
-    m_Colors: []
+    m_Colors:
+    - _ShadeOffset: {r: 1.13, g: 1.79, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

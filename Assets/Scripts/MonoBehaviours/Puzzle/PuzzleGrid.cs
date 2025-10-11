@@ -4,6 +4,9 @@ using SwapPuzzle.Interfaces;
 
 namespace SwapPuzzle.MonoBehaviours
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PuzzleGrid : MonoBehaviour, IPuzzleGrid
     {
 

@@ -30,7 +30,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _BorderRadius: 0.109
-    - _UOffset: 0.35
+    - _UOffset: 0.38
     - _VOffset: 0.49
     m_Colors:
     - _Offset: {r: 0.1, g: 0.03, b: 0, a: 0}

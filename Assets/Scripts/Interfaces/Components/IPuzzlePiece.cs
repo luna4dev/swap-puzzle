@@ -7,15 +7,7 @@ namespace SwapPuzzle.Interfaces
     /// </summary>
     public interface IPuzzlePiece
     {
-        /// <summary>
-        /// The original X position in the grid
-        /// </summary>
-        int OriginalX { get; }
-
-        /// <summary>
-        /// The original Y position in the grid
-        /// </summary>
-        int OriginalY { get; }
+        Vector2Int OriginalPos { get; }
 
         bool IsSolved { get; }
 
@@ -29,4 +21,4 @@ namespace SwapPuzzle.Interfaces
 
         void SetDebug(bool debug);
     }
-} 
+}
