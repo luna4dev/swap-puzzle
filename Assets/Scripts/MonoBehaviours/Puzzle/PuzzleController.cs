@@ -7,10 +7,13 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {
+        const int INITIAL_PUZZLE_PIECE_POOL_COUNT = 64;
+
         private IShuffler _shuffler;
         [SerializeField] private PuzzleGrid _puzzleGrid;
         [SerializeField] private PuzzleSpriteProvider _spriteProvider;
         [SerializeField] private PuzzleScoreSystem _scoreSystem;
+        [SerializeField] private PuzzlePieceProvider _puzzlePieceProvider;
 
         private bool _debugMode = false;
 
@@ -23,7 +26,7 @@ namespace SwapPuzzle.MonoBehaviours
         private void SetDebug(bool debug)
         {
             _debugMode = debug;
-            int gridSize = _puzzleGrid.GetGridSize();
+            int gridSize = _puzzleGrid.GridSize;
             for (int y = 0; y < gridSize; y++)
             {
                 for (int x = 0; x < gridSize; x++)
@@ -37,6 +40,7 @@ namespace SwapPuzzle.MonoBehaviours
         {
             _shuffler = new ControlledPlacement();
 
+            _puzzlePieceProvider.Prewarm(INITIAL_PUZZLE_PIECE_POOL_COUNT);
             _puzzleGrid.InitializeGrid(this, level.GridSize);
             RenderSpriteToPuzzlePieces(level);
             ShufflePieces(level.PresolvedPieces);
@@ -81,6 +85,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void HandleSwap()
         {
+            //TODO: initiate swap
             CheckSolutionAndMarkScore(true);
             bool completed = IsLevelComplete();
 
@@ -95,7 +100,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void CheckSolutionAndMarkScore(bool notifyScore = false)
         {
-            int gridSize = _puzzleGrid.GetGridSize();
+            int gridSize = _puzzleGrid.GridSize;
 
             int solveCount = 0;
             for (int y = 0; y < gridSize; y++)
@@ -123,7 +128,7 @@ namespace SwapPuzzle.MonoBehaviours
         public bool IsLevelComplete()
         {
             bool completed = true;
-            int gridSize = _puzzleGrid.GetGridSize();
+            int gridSize = _puzzleGrid.GridSize;
             for (int y = 0; y < gridSize; y++)
             {
                 for (int x = 0; x < gridSize; x++)
@@ -137,7 +142,7 @@ namespace SwapPuzzle.MonoBehaviours
         public int GetSolvedPiecesCount()
         {
             int count = 0;
-            int gridSize = _puzzleGrid.GetGridSize();
+            int gridSize = _puzzleGrid.GridSize;
             for (int y = 0; y < gridSize; y++)
             {
                 for (int x = 0; x < gridSize; x++)
@@ -146,6 +151,22 @@ namespace SwapPuzzle.MonoBehaviours
                 }
             }
             return count;
+        }
+
+        public void HandlePuzzlePieceDrop()
+        {
+            var dropped = UIDragDrop.Dropped.GetComponent<PuzzlePiece>();
+            var dropTarget = UIDragDrop.DropTarget.GetComponent<PuzzlePiece>();
+
+            // check valid
+            if (dropped == null) return;
+            if (dropTarget == null) return;
+            if (!CanSwapPieces(dropped, dropTarget)) return;
+
+            // swap
+            _puzzleGrid.InitiateSwap(dropped, dropTarget);
+
+            HandleSwap();
         }
     }
 }

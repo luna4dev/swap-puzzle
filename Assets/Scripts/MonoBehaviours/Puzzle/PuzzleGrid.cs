@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using SwapPuzzle.Interfaces;
+using System.Collections.Generic;
 
 namespace SwapPuzzle.MonoBehaviours
 {
@@ -14,48 +15,95 @@ namespace SwapPuzzle.MonoBehaviours
         /// a length and height of the puzzle piece
         /// </summary>
         private float _puzzlePieceSize;
-        private IPuzzlePiece[][] _grid;
-        private IPuzzleController _controller;
+        public int GridSize { get; private set; }
+        private List<IPuzzlePiece> _puzzlePieces = new();
+        [SerializeField] PuzzlePieceProvider _puzzlePieceProvider;
 
-        [SerializeField] private PuzzlePiece piecePrefab;
-
-        public void InitializeGrid(IPuzzleController controller, int _gridSize)
+        private int CalcIdxFromCoord(int x, int y)
         {
-            _controller = controller;
+            return (GridSize * y) + x;
+        }
 
-            // initialize grid 2d list 
-            _grid = new IPuzzlePiece[_gridSize][];
-            for (int i = 0; i < _gridSize; i++)
+        public void InitializeGrid(IPuzzleController controller, int gridSize)
+        {
+            // set grid
+            GridSize = gridSize;
+
+            ClearGrid();
+
+
+            // set size of the puzzle piece
+            RectTransform rectTransform = GetComponent<RectTransform>();
+            float areaLength = rectTransform.rect.width;
+            _puzzlePieceSize = areaLength / gridSize;
+
+            // request puzzle piece from pool
+            for (int i = 0; i < gridSize; i++)
             {
-                _grid[i] = new IPuzzlePiece[_gridSize];
+                for (int j = 0; j < gridSize; j++)
+                {
+                    PuzzlePiece piece = _puzzlePieceProvider.Get();
+                    _puzzlePieces.Add(piece);
+                    piece.transform.SetParent(transform);
+                    piece.gameObject.SetActive(true);
+                }
             }
 
-            InitializePuzzlePieces();
+            int x = 0, y = 0;
+            foreach (Transform child in transform)
+            {
+                // initialize piece object
+                PuzzlePiece piece = child.GetComponent<PuzzlePiece>();
+                piece.Initialize(controller, new Vector2Int(x, y), CalcIdxFromCoord(x, y) + 1);
+
+                // initialize piece rect transform
+                RectTransform rect = piece.GetComponent<RectTransform>();
+                rect.sizeDelta = new Vector2(_puzzlePieceSize, _puzzlePieceSize);
+
+                // set piece position
+                SetPieceAt(x, y, piece);
+
+                child.gameObject.SetActive(true);
+                x++;
+                if (x >= GridSize)
+                {
+                    x = 0;
+                    y++;
+                }
+                if (y >= GridSize) break;
+            }
         }
 
         public void ClearGrid()
         {
-            foreach (Transform child in transform)
+            while (_puzzlePieces.Count > 0)
             {
-                child.gameObject.SetActive(false);
+                IPuzzlePiece iPuzzlePiece = _puzzlePieces[_puzzlePieces.Count - 1];
+                _puzzlePieces.RemoveAt(_puzzlePieces.Count - 1);
+                if (iPuzzlePiece is PuzzlePiece puzzlePiece)
+                {
+                    _puzzlePieceProvider.Return(puzzlePiece);
+                }
             }
+
+            _puzzlePieces.Clear();
         }
 
         public IPuzzlePiece GetPieceAt(int x, int y)
         {
-            return _grid[y][x];
+            return _puzzlePieces[CalcIdxFromCoord(x, y)];
         }
 
         public void SetPieceAt(int x, int y, IPuzzlePiece _piece)
         {
             if (_piece is PuzzlePiece piece)
             {
-                float offset = _grid.Length % 2 == 0 ? _puzzlePieceSize / 2 : 0;
-                float rectX = _puzzlePieceSize * (x - _grid.Length / 2) + offset;
-                float rectY = -(_puzzlePieceSize * (y - _grid.Length / 2) + offset);
+                float offset = GridSize % 2 == 0 ? _puzzlePieceSize / 2 : 0;
+                float rectX = _puzzlePieceSize * (x - GridSize / 2) + offset;
+                float rectY = -(_puzzlePieceSize * (y - GridSize / 2) + offset);
                 piece.GetComponent<RectTransform>().localPosition = new(rectX, rectY);
 
-                _grid[y][x] = _piece;
+                _puzzlePieces[CalcIdxFromCoord(x, y)] = _piece;
             }
         }
 
@@ -69,137 +117,21 @@ namespace SwapPuzzle.MonoBehaviours
 
             SetPieceAt(piece1X, piece1Y, piece2);
             SetPieceAt(piece2X, piece2Y, piece1);
-
-            if (_controller != null) _controller.HandleSwap();
-        }
-
-        public void HandlePieceSelection(IPuzzlePiece selectedPiece)
-        {
-            // TODO
-        }
-
-        public bool CanSwapPieces(IPuzzlePiece _piece1, IPuzzlePiece _piece2)
-        {
-            if (_piece1 is PuzzlePiece piece1 && _piece2 is PuzzlePiece piece2)
-            {
-                if (piece1.IsSolved) return false;
-                if (piece2.IsSolved) return false;
-                if (piece1.Equals(piece2)) return false;
-                return true;
-            }
-            return false;
-        }
-
-        public void ClearSelection()
-        {
-            // TODO
-        }
-
-        public IPuzzlePiece GetSelectedPiece()
-        {
-            return default;
-        }
-
-        public int GetGridSize()
-        {
-            return _grid.Length;
         }
 
         private (int, int) GetCoord(IPuzzlePiece _piece)
         {
             if (_piece is PuzzlePiece piece)
             {
-                for (int y = 0; y < _grid.Length; y++)
+                for (int y = 0; y < GridSize; y++)
                 {
-                    for (int x = 0; x < _grid[y].Length; x++)
+                    for (int x = 0; x < GridSize; x++)
                     {
-                        if (_grid[y][x].Equals(piece)) return (x, y);
+                        if (_puzzlePieces[CalcIdxFromCoord(x, y)].Equals(piece)) return (x, y);
                     }
                 }
             }
             return (-1, -1);
-        }
-
-
-        public void InitializePuzzlePieces()
-        {
-            if (_grid == null || _grid.Length <= 0)
-            {
-                Debug.LogWarning("GridSize not properly initialized");
-                return;
-            }
-
-            // set size of the puzzle piece
-            RectTransform rectTransform = GetComponent<RectTransform>();
-            float areaLength = rectTransform.sizeDelta.x;
-            _puzzlePieceSize = areaLength / _grid.Length;
-
-            // set desired number of puzzle pieces
-            int newGridItemCount = _grid.Length * _grid.Length;
-            int existingGridItemCount = 0;
-
-            foreach (Transform child in transform)
-            {
-                if (child.TryGetComponent(out PuzzlePiece piece))
-                {
-                    existingGridItemCount++;
-                }
-                child.gameObject.SetActive(false);
-            }
-
-            // instantiate puzzle pieces
-            int diff = newGridItemCount - existingGridItemCount;
-            if (diff > 0)
-            {
-                for (int i = 0; i < diff; i++)
-                {
-                    var newObj = Instantiate(piecePrefab, transform);
-                    newObj.gameObject.SetActive(false);
-                }
-            }
-
-            int x = 0, y = 0;
-            foreach (Transform child in transform)
-            {
-                // initialize piece object
-                PuzzlePiece piece = child.GetComponent<PuzzlePiece>();
-                piece.Initialize(x, y, x + y * _grid.Length + 1);
-
-                // initialize piece rect transform
-                RectTransform rect = piece.GetComponent<RectTransform>();
-                rect.sizeDelta = new Vector2(_puzzlePieceSize, _puzzlePieceSize);
-
-                // set piece position
-                SetPieceAt(x, y, piece);
-
-                // set ui dragdrop event
-                UIDragDrop uiDragDrop = piece.GetComponent<UIDragDrop>();
-                uiDragDrop.OnDrop.RemoveAllListeners();
-                uiDragDrop.OnDrop.AddListener(HandlePuzzlePieceDrop);
-
-                child.gameObject.SetActive(true);
-                x++;
-                if (x >= _grid.Length)
-                {
-                    x = 0;
-                    y++;
-                }
-                if (y >= _grid.Length) break;
-            }
-        }
-
-        private void HandlePuzzlePieceDrop()
-        {
-            var dropped = UIDragDrop.Dropped.GetComponent<PuzzlePiece>();
-            var dropTarget = UIDragDrop.DropTarget.GetComponent<PuzzlePiece>();
-
-            // check valid
-            if (dropped == null) return;
-            if (dropTarget == null) return;
-            if (!CanSwapPieces(dropped, dropTarget)) return;
-
-            // swap
-            InitiateSwap(dropped, dropTarget);
         }
     }
 }

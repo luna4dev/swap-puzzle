@@ -5,12 +5,13 @@ namespace SwapPuzzle.Interfaces
     /// </summary>
     public interface IPuzzleGrid
     {
+        int GridSize { get; }
         // Grid Management
         /// <summary>
         /// Initializes the grid with the specified size
         /// </summary>
-        /// <param name="size">The size of the grid (e.g., 3 for a 3x3 grid)</param>
-        void InitializeGrid(IPuzzleController controller, int size);
+        /// <param name="gridSize">The size of the grid (e.g., 3 for a 3x3 grid)</param>
+        void InitializeGrid(IPuzzleController controller, int gridSize);
 
         void ClearGrid();
 
@@ -37,36 +38,5 @@ namespace SwapPuzzle.Interfaces
         /// <param name="piece1">The first piece</param>
         /// <param name="piece2">The second piece</param>
         void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2);
-
-        /// <summary>
-        /// Handles the selection of a piece by the player
-        /// </summary>
-        /// <param name="selectedPiece">The piece that was selected</param>
-        void HandlePieceSelection(IPuzzlePiece selectedPiece);
-
-        /// <summary>
-        /// Checks if two pieces can be swapped
-        /// </summary>
-        /// <param name="piece1">The first piece</param>
-        /// <param name="piece2">The second piece</param>
-        /// <returns>True if the pieces can be swapped, false otherwise</returns>
-        bool CanSwapPieces(IPuzzlePiece piece1, IPuzzlePiece piece2);
-
-        /// <summary>
-        /// Clears the current piece selection
-        /// </summary>
-        void ClearSelection();
-
-        /// <summary>
-        /// Gets the currently selected piece
-        /// </summary>
-        /// <returns>The currently selected piece, or null if none selected</returns>
-        IPuzzlePiece GetSelectedPiece();
-
-        /// <summary>
-        /// Gets the grid size
-        /// </summary>
-        /// <returns>The current grid size</returns>
-        int GetGridSize();
     }
 }

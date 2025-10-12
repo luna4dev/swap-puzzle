@@ -15,10 +15,15 @@ namespace SwapPuzzle.MonoBehaviours
         public bool IsSolved { get; private set; }
         private int _displayNumber = 0;
 
-        public void Initialize(int originalX, int originalY, int displayNumber)
+        public void Initialize(IPuzzleController controller, Vector2Int originalPos, int displayNumber)
         {
-            OriginalPos = new Vector2Int(originalX, originalY);
+            OriginalPos = originalPos;
             _displayNumber = displayNumber;
+
+            // set ui dragdrop event
+            _uiDragDrop.OnDrop.RemoveAllListeners();
+            _uiDragDrop.OnDrop.AddListener(controller.HandlePuzzlePieceDrop);
+
             SetPrestine();
         }
 

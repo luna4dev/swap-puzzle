@@ -17,7 +17,7 @@ namespace SwapPuzzle.Utilities
         /// <param name="targetSolvedCount">Number of pieces that should remain in correct positions after shuffle</param>
         public void Shuffle(IPuzzleGrid puzzleGrid, int targetSolvedCount = 0)
         {
-            int gridSize = puzzleGrid.GetGridSize();
+            int gridSize = puzzleGrid.GridSize;
             int totalPieces = gridSize * gridSize;
             
             // Validate target count

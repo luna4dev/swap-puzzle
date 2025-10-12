@@ -34,5 +34,7 @@ namespace SwapPuzzle.Interfaces
         int GetSolvedPiecesCount();
 
         void HandleSwap();
+
+        void HandlePuzzlePieceDrop();
     }
 } 
