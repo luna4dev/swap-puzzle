@@ -1,7 +1,5 @@
 using UnityEngine;
 using SwapPuzzle.Interfaces;
-using TMPro;
-using UnityEngine.UI;
 
 namespace SwapPuzzle.MonoBehaviours
 {
@@ -11,8 +9,8 @@ namespace SwapPuzzle.MonoBehaviours
         [SerializeField] private PuzzlePieceRenderer _renderer;
         public IPuzzlePieceRenderer Renderer { get { return _renderer; } }
         public Vector2Int OriginalPos { get; private set; }
+        public Vector2Int Pos { get; private set; }
 
-        public bool IsSolved { get; private set; }
         private int _displayNumber = 0;
 
         public void Initialize(IPuzzleController controller, Vector2Int originalPos, int displayNumber)
@@ -24,28 +22,29 @@ namespace SwapPuzzle.MonoBehaviours
             _uiDragDrop.OnDrop.RemoveAllListeners();
             _uiDragDrop.OnDrop.AddListener(controller.HandlePuzzlePieceDrop);
 
-            SetPrestine();
+            SetNormalState();
         }
 
-        public void SetPrestine()
+        public bool IsSolved()
+        {
+            return OriginalPos == Pos;
+        }
+
+        public void SetPos(Vector2Int pos)
+        {
+            Pos = pos;
+        }
+
+        public void SetNormalState()
         {
             _uiDragDrop.enabled = true;
             _renderer.SetEnabled();
-            IsSolved = false;
         }
 
-        public void SetSolved()
+        public void SetDisabledState()
         {
             _uiDragDrop.enabled = false;
             _renderer.SetDisabled();
-            IsSolved = true;
-        }
-
-        public void SetLevelCompleted()
-        {
-            _uiDragDrop.enabled = false;
-            _renderer.SetEnabled();
-            IsSolved = true;
         }
 
         public void SetImage(Sprite image)

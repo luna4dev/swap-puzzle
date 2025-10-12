@@ -24,6 +24,11 @@ namespace SwapPuzzle.MonoBehaviours
             return (GridSize * y) + x;
         }
 
+        private int CalcIdxFromCoord(Vector2Int pos)
+        {
+            return CalcIdxFromCoord(pos.x, pos.y);
+        }
+
         public void InitializeGrid(IPuzzleController controller, int gridSize)
         {
             // set grid
@@ -52,16 +57,18 @@ namespace SwapPuzzle.MonoBehaviours
             int x = 0, y = 0;
             foreach (Transform child in transform)
             {
+                Vector2Int pos = new(x, y);
+
                 // initialize piece object
                 PuzzlePiece piece = child.GetComponent<PuzzlePiece>();
-                piece.Initialize(controller, new Vector2Int(x, y), CalcIdxFromCoord(x, y) + 1);
+                piece.Initialize(controller, pos, CalcIdxFromCoord(pos) + 1);
 
                 // initialize piece rect transform
                 RectTransform rect = piece.GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(_puzzlePieceSize, _puzzlePieceSize);
 
                 // set piece position
-                SetPieceAt(x, y, piece);
+                SetPieceAt(pos, piece);
 
                 child.gameObject.SetActive(true);
                 x++;
@@ -94,44 +101,40 @@ namespace SwapPuzzle.MonoBehaviours
             return _puzzlePieces[CalcIdxFromCoord(x, y)];
         }
 
-        public void SetPieceAt(int x, int y, IPuzzlePiece _piece)
+        public IPuzzlePiece GetPieceAt(Vector2Int pos)
         {
-            if (_piece is PuzzlePiece piece)
+            return _puzzlePieces[CalcIdxFromCoord(pos)];
+        }
+
+        public void SetPieceAt(Vector2Int pos, IPuzzlePiece piece)
+        {
+            // set pos data of the puzzle piece
+            piece.SetPos(pos);
+
+            // set pos in the list that this object maintains
+            _puzzlePieces[CalcIdxFromCoord(pos)] = piece;
+
+            // set piece's Canvas position
+            if (piece is PuzzlePiece pieceObj)
             {
                 float offset = GridSize % 2 == 0 ? _puzzlePieceSize / 2 : 0;
-                float rectX = _puzzlePieceSize * (x - GridSize / 2) + offset;
-                float rectY = -(_puzzlePieceSize * (y - GridSize / 2) + offset);
-                piece.GetComponent<RectTransform>().localPosition = new(rectX, rectY);
-
-                _puzzlePieces[CalcIdxFromCoord(x, y)] = _piece;
+                float rectX = _puzzlePieceSize * (pos.x - GridSize / 2) + offset;
+                float rectY = -(_puzzlePieceSize * (pos.y - GridSize / 2) + offset);
+                pieceObj.GetComponent<RectTransform>().localPosition = new(rectX, rectY);
             }
         }
 
-        public void InitiateSwap(IPuzzlePiece piece1, IPuzzlePiece piece2)
+        public void SetPieceAt(int x, int y, IPuzzlePiece piece)
         {
-            (int piece1X, int piece1Y) = GetCoord(piece1);
-            if (piece1X == -1) return;
-
-            (int piece2X, int piece2Y) = GetCoord(piece2);
-            if (piece2X == -1) return;
-
-            SetPieceAt(piece1X, piece1Y, piece2);
-            SetPieceAt(piece2X, piece2Y, piece1);
+            SetPieceAt(new Vector2Int(x, y), piece);
         }
 
-        private (int, int) GetCoord(IPuzzlePiece _piece)
+        public void Swap(IPuzzlePiece piece1, IPuzzlePiece piece2)
         {
-            if (_piece is PuzzlePiece piece)
-            {
-                for (int y = 0; y < GridSize; y++)
-                {
-                    for (int x = 0; x < GridSize; x++)
-                    {
-                        if (_puzzlePieces[CalcIdxFromCoord(x, y)].Equals(piece)) return (x, y);
-                    }
-                }
-            }
-            return (-1, -1);
+            Vector2Int piece1Pos = piece1.Pos;
+            Vector2Int piece2Pos = piece2.Pos;
+            SetPieceAt(piece1Pos, piece2);
+            SetPieceAt(piece2Pos, piece1);
         }
     }
 }

@@ -8,14 +8,12 @@ namespace SwapPuzzle.MonoBehaviours
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {
         const int INITIAL_PUZZLE_PIECE_POOL_COUNT = 64;
-
-        private IShuffler _shuffler;
+        private IShuffler _shuffler = new ControlledPlacement();
+        private bool _debugMode = false;
         [SerializeField] private PuzzleGrid _puzzleGrid;
         [SerializeField] private PuzzleSpriteProvider _spriteProvider;
         [SerializeField] private PuzzleScoreSystem _scoreSystem;
         [SerializeField] private PuzzlePieceProvider _puzzlePieceProvider;
-
-        private bool _debugMode = false;
 
         public void ToggleDebugMode()
         {
@@ -23,32 +21,23 @@ namespace SwapPuzzle.MonoBehaviours
             SetDebug(!_debugMode);
         }
 
-        private void SetDebug(bool debug)
-        {
-            _debugMode = debug;
-            int gridSize = _puzzleGrid.GridSize;
-            for (int y = 0; y < gridSize; y++)
-            {
-                for (int x = 0; x < gridSize; x++)
-                {
-                    _puzzleGrid.GetPieceAt(x, y).SetDebug(debug);
-                }
-            }
-        }
-
         public void InitializePuzzle(ILevelData level)
         {
-            _shuffler = new ControlledPlacement();
-
             _puzzlePieceProvider.Prewarm(INITIAL_PUZZLE_PIECE_POOL_COUNT);
             _puzzleGrid.InitializeGrid(this, level.GridSize);
             RenderSpriteToPuzzlePieces(level);
             ShufflePieces(level.PresolvedPieces);
-            CheckSolutionAndMarkScore();
+            UpdatePuzzlePieceState();
             SetDebug(_debugMode);
         }
 
-        public void RenderSpriteToPuzzlePieces(ILevelData levelData)
+        public void ClearPuzzle()
+        {
+            _puzzleGrid.ClearGrid();
+            _scoreSystem.Clear();
+        }
+
+        private void RenderSpriteToPuzzlePieces(ILevelData levelData)
         {
             if (_spriteProvider == null)
             {
@@ -66,91 +55,35 @@ namespace SwapPuzzle.MonoBehaviours
             }
         }
 
-        public void ShufflePieces(int presolvedPiecesCount)
+        private void ShufflePieces(int presolvedPiecesCount)
         {
             _shuffler.Shuffle(_puzzleGrid, presolvedPiecesCount);
         }
 
-        public bool CanSwapPieces(IPuzzlePiece _piece1, IPuzzlePiece _piece2)
+        private void UpdatePuzzlePieceState()
         {
-            if (_piece1 is PuzzlePiece piece1 && _piece2 is PuzzlePiece piece2)
+            for (int y = 0; y < _puzzleGrid.GridSize; y++)
             {
-                if (piece1.IsSolved) return false;
-                if (piece2.IsSolved) return false;
-                if (piece1.Equals(piece2)) return false;
-                return true;
-            }
-            return false;
-        }
-
-        public void HandleSwap()
-        {
-            //TODO: initiate swap
-            CheckSolutionAndMarkScore(true);
-            bool completed = IsLevelComplete();
-
-            if (!completed) return;
-            _scoreSystem.Notify(EPuzzleSolveType.PuzzleWin);
-            ILevelData currentLevel = ProgressManager.Instance.GetCurrentLevel();
-            bool hasNextLevel = ProgressManager.Instance.HasNextLevel();
-            ProgressManager.Instance.CompleteCurrentLevel();
-            if (hasNextLevel) ProgressManager.Instance.GoToNextLevel();
-            StartCoroutine(LevelCompletePopup.OpenPopup(currentLevel, hasNextLevel));
-        }
-
-        public void CheckSolutionAndMarkScore(bool notifyScore = false)
-        {
-            int gridSize = _puzzleGrid.GridSize;
-
-            int solveCount = 0;
-            for (int y = 0; y < gridSize; y++)
-            {
-                for (int x = 0; x < gridSize; x++)
+                for (int x = 0; x < _puzzleGrid.GridSize; x++)
                 {
                     IPuzzlePiece piece = _puzzleGrid.GetPieceAt(x, y);
-                    if (x == piece.OriginalPos.x && y == piece.OriginalPos.y)
-                    {
-                        piece.SetSolved();
-                        solveCount++;
-                    }
+                    if (piece.IsSolved()) piece.SetDisabledState();
+                    else piece.SetNormalState();
                 }
             }
-
-            if (!notifyScore) return;
-
-            Debug.Log(solveCount);
-
-            if (solveCount == 0) _scoreSystem.Notify(EPuzzleSolveType.Fail);
-            if (solveCount == 1) _scoreSystem.Notify(EPuzzleSolveType.SolveOne);
-            if (solveCount == 2) _scoreSystem.Notify(EPuzzleSolveType.SolveBoth);
         }
 
-        public bool IsLevelComplete()
+        private void SetDebug(bool debug)
         {
-            bool completed = true;
+            _debugMode = debug;
             int gridSize = _puzzleGrid.GridSize;
             for (int y = 0; y < gridSize; y++)
             {
                 for (int x = 0; x < gridSize; x++)
                 {
-                    completed = completed && _puzzleGrid.GetPieceAt(x, y).IsSolved;
+                    _puzzleGrid.GetPieceAt(x, y).SetDebug(debug);
                 }
             }
-            return completed;
-        }
-
-        public int GetSolvedPiecesCount()
-        {
-            int count = 0;
-            int gridSize = _puzzleGrid.GridSize;
-            for (int y = 0; y < gridSize; y++)
-            {
-                for (int x = 0; x < gridSize; x++)
-                {
-                    count += _puzzleGrid.GetPieceAt(x, y).IsSolved ? 1 : 0;
-                }
-            }
-            return count;
         }
 
         public void HandlePuzzlePieceDrop()
@@ -164,9 +97,61 @@ namespace SwapPuzzle.MonoBehaviours
             if (!CanSwapPieces(dropped, dropTarget)) return;
 
             // swap
-            _puzzleGrid.InitiateSwap(dropped, dropTarget);
+            _puzzleGrid.Swap(dropped, dropTarget);
 
-            HandleSwap();
+            // if solved, set piece to disabled
+            if (dropped.IsSolved()) dropped.SetDisabledState();
+            if (dropTarget.IsSolved()) dropTarget.SetDisabledState();
+
+            // notify score system
+            NotifyScoreSystem(dropped, dropTarget);
+
+            if (IsLevelComplete()) HandleLevelComplete();
+        }
+
+        private bool CanSwapPieces(IPuzzlePiece piece1, IPuzzlePiece piece2)
+        {
+            if (piece1.IsSolved()) return false;
+            if (piece2.IsSolved()) return false;
+            if (piece1.Equals(piece2)) return false;
+            return true;
+        }
+
+        private void NotifyScoreSystem(IPuzzlePiece piece1, IPuzzlePiece piece2)
+        {
+            bool piece1Solved = piece1.IsSolved();
+            bool piece2Solved = piece2.IsSolved();
+            if (piece1Solved && piece2Solved) _scoreSystem.Notify(EPuzzleSolveType.SolveBoth);
+            if (piece1Solved ^ piece2Solved) _scoreSystem.Notify(EPuzzleSolveType.SolveOne);
+            if (!piece1Solved && !piece2Solved) _scoreSystem.Notify(EPuzzleSolveType.Fail);
+        }
+
+        private bool IsLevelComplete()
+        {
+            bool completed = true;
+            int gridSize = _puzzleGrid.GridSize;
+            for (int y = 0; y < gridSize; y++)
+            {
+                for (int x = 0; x < gridSize; x++)
+                {
+                    completed = completed && _puzzleGrid.GetPieceAt(x, y).IsSolved();
+                }
+            }
+            return completed;
+        }
+
+        private void HandleLevelComplete()
+        {
+            _scoreSystem.Notify(EPuzzleSolveType.PuzzleWin);
+
+            // finalize level data
+            ILevelData currentLevel = ProgressManager.Instance.GetCurrentLevel();
+            bool hasNextLevel = ProgressManager.Instance.HasNextLevel();
+
+            // Notify Current level is completed
+            ProgressManager.Instance.CompleteCurrentLevel();
+            if (hasNextLevel) ProgressManager.Instance.GoToNextLevel();
+            StartCoroutine(LevelCompletePopup.OpenPopup(currentLevel, hasNextLevel));
         }
     }
 }

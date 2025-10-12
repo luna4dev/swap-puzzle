@@ -153,7 +153,7 @@ namespace SwapPuzzle.MonoBehaviours
             Debug.Log(curSnapshot);
         }
 
-        public void Cleanup()
+        public void Clear()
         {
             _dirty = false;
             _log.Clear();

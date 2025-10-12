@@ -11,29 +11,7 @@ namespace SwapPuzzle.Interfaces
         /// <param name="levelData">The data for the level to initialize</param>
         void InitializePuzzle(ILevelData levelData);
 
-        /// <summary>
-        /// Shuffles the puzzle pieces to start the game
-        /// </summary>
-        void ShufflePieces(int presolvedPieces);
-
-        /// <summary>
-        /// Checks if the current puzzle state is a solution
-        /// </summary>
-        void CheckSolutionAndMarkScore(bool notifyScore);
-
-        /// <summary>
-        /// Checks if the current level is complete
-        /// </summary>
-        /// <returns>True if the level is complete, false otherwise</returns>
-        bool IsLevelComplete();
-
-        /// <summary>
-        /// Gets the count of pieces that are in their correct positions
-        /// </summary>
-        /// <returns>The number of solved pieces</returns>
-        int GetSolvedPiecesCount();
-
-        void HandleSwap();
+        void ClearPuzzle();
 
         void HandlePuzzlePieceDrop();
     }

@@ -8,14 +8,15 @@ namespace SwapPuzzle.Interfaces
     public interface IPuzzlePiece
     {
         Vector2Int OriginalPos { get; }
+        Vector2Int Pos { get; }
 
-        bool IsSolved { get; }
+        bool IsSolved();
 
-        void SetPrestine();
+        void SetPos(Vector2Int pos);
 
-        void SetSolved();
+        void SetNormalState();
 
-        void SetLevelCompleted();
+        void SetDisabledState();
 
         void SetImage(Sprite image);
 

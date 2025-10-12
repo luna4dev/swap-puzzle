@@ -36,7 +36,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void Prewarm(int count)
         {
-            for (int i = 0; i < count; i++)
+            while (puzzlePiecePool.Count < count)
             {
                 Prepare();
             }
