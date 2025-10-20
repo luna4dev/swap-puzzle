@@ -2,7 +2,6 @@ using UnityEngine;
 using SwapPuzzle.Interfaces;
 using SwapPuzzle.Utilities;
 using System;
-using log4net.Core;
 
 namespace SwapPuzzle.MonoBehaviours
 {

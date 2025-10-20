@@ -8,6 +8,8 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class IllustrationTesterController : MonoBehaviour
     {
+        [SerializeField] TMP_Text PathIndicator;
+
         [SerializeField] IllustrationViewer viewer;
         [SerializeField] Button fileRefreshButton;
         [SerializeField] TMP_Dropdown fileSelectorDropdown;
@@ -46,6 +48,8 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void OnClickRefreshFileList()
         {
+            PathIndicator.text = _spriteLoader.GetIllustrationsPath();
+
             fileSelectorDropdown.ClearOptions();
             string[] paths = _spriteLoader.GetAllPngFiles();
             string folderPath = _spriteLoader.GetIllustrationsPath();
