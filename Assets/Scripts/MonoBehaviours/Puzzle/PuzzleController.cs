@@ -2,18 +2,20 @@ using UnityEngine;
 using SwapPuzzle.Interfaces;
 using SwapPuzzle.Utilities;
 using System;
+using log4net.Core;
 
 namespace SwapPuzzle.MonoBehaviours
 {
     public class PuzzleController : MonoBehaviour, IPuzzleController
     {
         const int INITIAL_PUZZLE_PIECE_POOL_COUNT = 64;
-        private IShuffler _shuffler = new ControlledPlacement();
-        private bool _debugMode = false;
-        [SerializeField] private PuzzleGrid _puzzleGrid;
-        [SerializeField] private PuzzleSpriteProvider _spriteProvider;
-        [SerializeField] private PuzzleScoreSystem _scoreSystem;
-        [SerializeField] private PuzzlePieceProvider _puzzlePieceProvider;
+        protected IShuffler _shuffler = new ControlledPlacement();
+        protected ILevelData _currentLevelData;
+        protected bool _debugMode = false;
+        [SerializeField] protected PuzzleGrid _puzzleGrid;
+        [SerializeField] protected PuzzleSpriteProvider _spriteProvider;
+        [SerializeField] protected PuzzleScoreSystem _scoreSystem;
+        [SerializeField] protected PuzzlePieceProvider _puzzlePieceProvider;
 
         public void ToggleDebugMode()
         {
@@ -23,6 +25,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void InitializePuzzle(ILevelData level)
         {
+            _currentLevelData = level;
             _puzzlePieceProvider.Prewarm(INITIAL_PUZZLE_PIECE_POOL_COUNT);
             _puzzleGrid.InitializeGrid(this, level.GridSize);
             RenderSpriteToPuzzlePieces(level);
@@ -55,12 +58,12 @@ namespace SwapPuzzle.MonoBehaviours
             }
         }
 
-        private void ShufflePieces(int presolvedPiecesCount)
+        protected void ShufflePieces(int presolvedPiecesCount)
         {
             _shuffler.Shuffle(_puzzleGrid, presolvedPiecesCount);
         }
 
-        private void UpdatePuzzlePieceState()
+        protected void UpdatePuzzlePieceState()
         {
             for (int y = 0; y < _puzzleGrid.GridSize; y++)
             {
@@ -73,7 +76,7 @@ namespace SwapPuzzle.MonoBehaviours
             }
         }
 
-        private void SetDebug(bool debug)
+        protected void SetDebug(bool debug)
         {
             _debugMode = debug;
             int gridSize = _puzzleGrid.GridSize;
@@ -109,7 +112,7 @@ namespace SwapPuzzle.MonoBehaviours
             if (IsLevelComplete()) HandleLevelComplete();
         }
 
-        private bool CanSwapPieces(IPuzzlePiece piece1, IPuzzlePiece piece2)
+        protected bool CanSwapPieces(IPuzzlePiece piece1, IPuzzlePiece piece2)
         {
             if (piece1.IsSolved()) return false;
             if (piece2.IsSolved()) return false;
@@ -117,7 +120,7 @@ namespace SwapPuzzle.MonoBehaviours
             return true;
         }
 
-        private void NotifyScoreSystem(IPuzzlePiece piece1, IPuzzlePiece piece2)
+        protected void NotifyScoreSystem(IPuzzlePiece piece1, IPuzzlePiece piece2)
         {
             bool piece1Solved = piece1.IsSolved();
             bool piece2Solved = piece2.IsSolved();
@@ -126,7 +129,7 @@ namespace SwapPuzzle.MonoBehaviours
             if (!piece1Solved && !piece2Solved) _scoreSystem.Notify(EPuzzleSolveType.Fail);
         }
 
-        private bool IsLevelComplete()
+        protected bool IsLevelComplete()
         {
             bool completed = true;
             int gridSize = _puzzleGrid.GridSize;
@@ -140,7 +143,7 @@ namespace SwapPuzzle.MonoBehaviours
             return completed;
         }
 
-        private void HandleLevelComplete()
+        protected void HandleLevelComplete()
         {
             _scoreSystem.Notify(EPuzzleSolveType.PuzzleWin);
 

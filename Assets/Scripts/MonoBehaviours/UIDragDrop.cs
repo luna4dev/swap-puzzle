@@ -28,6 +28,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (UIDragRoot.Instance == null) return;
             if (!_rectTransform) _rectTransform = GetComponent<RectTransform>();
 
             _originalPosition = transform.position;
@@ -53,6 +54,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (UIDragRoot.Instance == null) return;
             Vector2 localPointerPosition;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 UIDragRoot.Instance.RectTransform,
@@ -67,6 +69,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (UIDragRoot.Instance == null) return;
             if (!_rectTransform) _rectTransform = GetComponent<RectTransform>();
 
             // rollback position
