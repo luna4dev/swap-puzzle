@@ -1,0 +1,9 @@
+﻿<Solution>
+  <Project Path="SwapPuzzle.Classes.csproj" />
+  <Project Path="SwapPuzzle.MonoBehaviours.csproj" />
+  <Project Path="SwapPuzzle.Interfaces.csproj" />
+  <Project Path="SwapPuzzle.Editors.csproj" />
+  <Project Path="SwapPuzzle.AssetDefinitions.csproj" />
+  <Project Path="SwapPuzzle.Utilities.csproj" />
+  <Project Path="SwapPuzzle.Services.csproj" />
+</Solution>
