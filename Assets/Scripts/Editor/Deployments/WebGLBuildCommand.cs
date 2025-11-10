@@ -11,6 +11,11 @@ namespace SwapPuzzle.Editor
         [MenuItem("Build/Build WebGL")]
         public static void BuildWebGL()
         {
+            BuildWebGL(null);
+        }
+
+        public static void BuildWebGL(DeploymentConfig config)
+        {
             // Check WebGL platform support
             if (!IsWebGLSupported())
             {
@@ -51,7 +56,7 @@ namespace SwapPuzzle.Editor
             };
 
             // Set WebGL specific settings
-            ConfigureWebGLSettings();
+            ConfigureWebGLSettings(config);
 
             // Execute build
             try
@@ -104,17 +109,21 @@ namespace SwapPuzzle.Editor
             return scenes;
         }
 
-        private static void ConfigureWebGLSettings()
+        private static void ConfigureWebGLSettings(DeploymentConfig config)
         {
-            // Set WebGL compression to Gzip
-            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
-            
+            // Use config compression if provided, otherwise default to Gzip
+            WebGLCompressionFormat compression = config != null
+                ? config.compressionFormat
+                : WebGLCompressionFormat.Gzip;
+
+            PlayerSettings.WebGL.compressionFormat = compression;
+
             // Additional WebGL settings can be configured here
             // For example:
             // PlayerSettings.WebGL.template = "PROJECT:Minimal";
             // PlayerSettings.WebGL.memorySize = 512;
-            
-            Debug.Log("WebGL settings configured: Compression = Gzip");
+
+            Debug.Log($"WebGL settings configured: Compression = {compression}");
         }
 
         private static void CleanupFailedBuild(string buildPath)
