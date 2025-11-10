@@ -91,6 +91,9 @@ namespace SwapPuzzle.MonoBehaviours
 
     public class PuzzleScoreSystem : MonoBehaviour
     {
+        public delegate void ScoreChange(PuzzleScoreSnapshot snapshot);
+        public event ScoreChange OnScoreChange;
+
         private List<PuzzleScoreSnapshot> _log = new();
         private bool _dirty = false;
         public bool Dirty { get { return _dirty; } }
@@ -150,7 +153,7 @@ namespace SwapPuzzle.MonoBehaviours
             _dirty = true;
             PuzzleScoreSnapshot curSnapshot = new PuzzleScoreSnapshot(LastSnapshot(), solveType);
             _log.Add(curSnapshot);
-            Debug.Log(curSnapshot);
+            OnScoreChange?.Invoke(curSnapshot);
         }
 
         public void Clear()
