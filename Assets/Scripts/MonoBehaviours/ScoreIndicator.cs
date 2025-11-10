@@ -6,12 +6,14 @@ namespace SwapPuzzle.MonoBehaviours
 {
     public class ScoreIndicator : MonoBehaviour
     {
-        [SerializeField] TMP_Text text;
+        [SerializeField] TMP_Text scoreText;
+        [SerializeField] TMP_Text comboText;
         [SerializeField] PuzzleScoreSystem puzzleScoreSystem;
 
         public void Awake()
         {
-            text.text = "";
+            scoreText.text = "";
+            comboText.text = "";
         }
 
         private void OnEnable()
@@ -32,7 +34,33 @@ namespace SwapPuzzle.MonoBehaviours
 
         private void HandleScoreChange(PuzzleScoreSnapshot snapshot)
         {
-            text.text = snapshot.DisplayedScore.ToString();
+            UpdateComboText(snapshot);
+            UpdateScoreText(snapshot);
+        }
+
+        private void UpdateComboText(PuzzleScoreSnapshot snapshot)
+        {
+            if (snapshot.Combo > 0)
+            {
+                comboText.text = $"Combo X{snapshot.Combo}";
+            }
+            else
+            {
+                comboText.text = "";
+            }
+        }
+
+        private void UpdateScoreText(PuzzleScoreSnapshot snapshot)
+        {
+            // display score without combo multiplier
+            if (snapshot.Combo > 0)
+            {
+                scoreText.text = $"(+{snapshot.ScoreStack}) {snapshot.BaseScore}";
+            }
+            else
+            {
+                scoreText.text = snapshot.DisplayedScore.ToString();
+            }
         }
     }
 }
