@@ -3,12 +3,12 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
+using SwapPuzzle.AssetDefinitions;
 
 namespace SwapPuzzle.Editor
 {
     public static class WebGLBuildCommand
     {
-        [MenuItem("Build/Build WebGL")]
         public static void BuildWebGL()
         {
             BuildWebGL(null);
@@ -67,6 +67,13 @@ namespace SwapPuzzle.Editor
                 // Check build result
                 if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
                 {
+                    // Increment build number if config is provided
+                    if (config != null)
+                    {
+                        config.IncrementBuildNumber();
+                        Debug.Log($"Build number incremented to: {config.buildNumber}");
+                    }
+
                     Debug.Log($"WebGL build completed successfully!");
                     Debug.Log($"Build location: {absoluteBuildPath}");
                     Debug.Log($"Build size: {GetBuildSizeString(report.summary.totalSize)}");

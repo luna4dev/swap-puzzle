@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2bef56eeb21be4eb7b8c1c2bb5f7c43c
+guid: 7d8e308b2fdc34705bda18d6f5ad2d20
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5879615867834815173
-    second: Illust #1_0
+      213: 6749649328417879415
+    second: Character SD #3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Illust #1_0
+      name: Character SD #3_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 4000
-        height: 3000
+        width: 2000
+        height: 2000
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b3da4fd0588676ea0800000000000000
-      internalID: -5879615867834815173
+      spriteID: 7753dc29d429bad50800000000000000
+      internalID: 6749649328417879415
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Illust #1_0: -5879615867834815173
+      Character SD #3_0: 6749649328417879415
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

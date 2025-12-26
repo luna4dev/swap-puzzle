@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace SwapPuzzle.Editor
+namespace SwapPuzzle.AssetDefinitions
 {
     [CreateAssetMenu(fileName = "DeploymentConfig", menuName = "SwapPuzzle/Deployment Config", order = 1)]
     public class DeploymentConfig : ScriptableObject
@@ -38,6 +38,17 @@ namespace SwapPuzzle.Editor
 
         [Tooltip("Delete files from S3 that don't exist locally")]
         public bool deleteRemovedFiles = false;
+
+        [Header("Build Version")]
+        [Tooltip("Current build number (auto-increments on each build)")]
+        public int buildNumber = 0;
+
+        public void IncrementBuildNumber()
+        {
+            buildNumber++;
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssets();
+        }
     }
 }
 #endif

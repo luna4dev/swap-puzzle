@@ -17,7 +17,7 @@ MonoBehaviour:
   s3Path: swapp/
   awsProfile: default
   compressionFormat: 1
-  staticAssetsCacheMaxAge: 31536000
+  staticAssetsCacheMaxAge: 0
   htmlCacheControl: no-cache
   publicRead: 1
   deleteRemovedFiles: 1

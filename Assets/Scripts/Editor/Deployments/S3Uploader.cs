@@ -4,12 +4,12 @@ using UnityEditor;
 using System;
 using System.IO;
 using System.Diagnostics;
+using SwapPuzzle.AssetDefinitions;
 
 namespace SwapPuzzle.Editor
 {
     public static class S3Uploader
     {
-        [MenuItem("Build/Upload to S3")]
         public static void UploadToS3()
         {
             UploadToS3(null);
@@ -81,7 +81,6 @@ namespace SwapPuzzle.Editor
                              $"--profile {config.awsProfile} " +
                              SetCacheHeaders(config) +
                              SetContentEncodingHeaders(config) +
-                             (config.publicRead ? "--acl public-read " : "") +
                              (config.deleteRemovedFiles ? "--delete" : "");
 
             try
