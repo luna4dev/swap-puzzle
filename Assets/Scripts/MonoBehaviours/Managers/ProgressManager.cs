@@ -93,13 +93,23 @@ namespace SwapPuzzle.MonoBehaviours
             throw new Exception("Invalid: level name doesn't exists");
         }
 
-        public void CompleteCurrentLevel()
+        public IProgressLog GetLastCompletedProgress()
+        {
+            if (_runtime == null)
+            {
+                return null;
+            }
+
+            return _runtime.GetLastCompletedProgress();
+        }
+
+        public void CompleteCurrentLevel(IScoreReport scoreReport)
         {
             if (_runtime == null)
             {
                 throw new Exception("Invalid: runtime not exists");
             }
-            _runtime.LogProgressComplete(_levelProgressionData.Name, _runtime.CurrentLevel());
+            _runtime.LogProgressComplete(_levelProgressionData.Name, _runtime.CurrentLevel(), scoreReport);
         }
 
         private ILevelData FindNextLevel(string currentLevelName)

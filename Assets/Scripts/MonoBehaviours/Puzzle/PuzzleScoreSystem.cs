@@ -1,18 +1,12 @@
 
 using System.Collections.Generic;
+using SwapPuzzle.Classes;
+using SwapPuzzle.Interfaces;
 using UnityEngine;
 
 namespace SwapPuzzle.MonoBehaviours
 {
-    public enum EPuzzleSolveType
-    {
-        SolveBoth,
-        SolveOne,
-        Fail,
-        PuzzleWin,
-    }
-
-    public class PuzzleScoreSnapshot
+    public class PuzzleScoreSnapshot : IPuzzleScoreSnapshot
     {
         public const int SOLVE_BOTH_SCORE = 4;
         public const int SOLVE_ONE_SCORE = 1;
@@ -21,29 +15,33 @@ namespace SwapPuzzle.MonoBehaviours
         /// <summary>
         /// Save Current solve type
         /// </summary>
-        public EPuzzleSolveType SolveType;
+        public EPuzzleSolveType SolveType { get; private set; }
+
         /// <summary>
         /// save current combo count
         /// ex) if fail -> set to 0, if success prev combo was 2 then set to 3
         /// </summary>
-        public int Combo;
+        public int Combo { get; private set; }
+
         /// <summary>
         /// Score stack starts from last fail movement. if prev was 4 and i solve both this time, it is set to 8(4 + 4)
         /// Later, it is multiplied with combo and added up to base score
         /// </summary>
-        public int ScoreStack;
+        public int ScoreStack { get; private set; }
+
         /// <summary>
         /// base score is the score of last fail movment. if gamer in combo, the base score stays the same
         /// when gamer fails to keep the combo, the score stack * combo will be added to basescore
         /// </summary>
-        public int BaseScore;
+        public int BaseScore { get; private set; }
+
         /// <summary>
         /// displayed score is basically baseScore + scoreStack * combo at this snapshot.
-        /// it is not confirmed yet but if next movement is failure or game ends it becomes the real one 
+        /// it is not confirmed yet but if next movement is failure or game ends it becomes the real one
         /// </summary>
-        public int DisplayedScore;
+        public int DisplayedScore { get; private set; }
 
-        public PuzzleScoreSnapshot(PuzzleScoreSnapshot prev, EPuzzleSolveType solveType)
+        public PuzzleScoreSnapshot(IPuzzleScoreSnapshot prev, EPuzzleSolveType solveType)
         {
             SolveType = solveType;
 
@@ -91,41 +89,42 @@ namespace SwapPuzzle.MonoBehaviours
 
     public class PuzzleScoreSystem : MonoBehaviour
     {
-        public delegate void ScoreChange(PuzzleScoreSnapshot snapshot);
+        public delegate void ScoreChange(IPuzzleScoreSnapshot snapshot);
         public event ScoreChange OnScoreChange;
 
-        private List<PuzzleScoreSnapshot> _log = new();
+        private List<IPuzzleScoreSnapshot> _log = new();
         private bool _dirty = false;
         public bool Dirty { get { return _dirty; } }
 
-        private PuzzleScoreSnapshot LastSnapshot()
+        private IPuzzleScoreSnapshot LastSnapshot()
         {
             return _log.Count > 0 ? _log[_log.Count - 1] : null;
         }
 
-        private PuzzleScoreSnapshot SecondLastSnapshot() {
+        private IPuzzleScoreSnapshot SecondLastSnapshot()
+        {
             if (_log.Count < 2) return null;
             return _log[_log.Count - 2];
         }
 
         public int GetDisplayedScore()
         {
-            PuzzleScoreSnapshot lastSnapshot = LastSnapshot();
+            IPuzzleScoreSnapshot lastSnapshot = LastSnapshot();
             if (lastSnapshot == null) return 0;
             return lastSnapshot.DisplayedScore;
         }
 
         public int GetCombo()
         {
-            PuzzleScoreSnapshot lastSnapshot = LastSnapshot();
+            IPuzzleScoreSnapshot lastSnapshot = LastSnapshot();
             if (lastSnapshot == null) return 0;
             return lastSnapshot.Combo;
         }
 
         public int GetScoreAddition()
         {
-            PuzzleScoreSnapshot lastSnapshot = LastSnapshot();
-            PuzzleScoreSnapshot secondLastSnapshot = SecondLastSnapshot();
+            IPuzzleScoreSnapshot lastSnapshot = LastSnapshot();
+            IPuzzleScoreSnapshot secondLastSnapshot = SecondLastSnapshot();
 
             if (lastSnapshot == null) return 0;
             if (secondLastSnapshot == null) return LastSnapshot().DisplayedScore;
@@ -135,25 +134,31 @@ namespace SwapPuzzle.MonoBehaviours
 
         public int GetCumulativeScoreAdditionFromLastFail()
         {
-            PuzzleScoreSnapshot lastSnapshot = LastSnapshot();
+            IPuzzleScoreSnapshot lastSnapshot = LastSnapshot();
             if (lastSnapshot == null) return 0;
             if (lastSnapshot.SolveType != EPuzzleSolveType.Fail && lastSnapshot.SolveType != EPuzzleSolveType.PuzzleWin)
             {
                 return lastSnapshot.DisplayedScore - lastSnapshot.BaseScore;
             }
 
-            PuzzleScoreSnapshot secondLastSnapshot = SecondLastSnapshot();
+            IPuzzleScoreSnapshot secondLastSnapshot = SecondLastSnapshot();
             if (secondLastSnapshot.SolveType == EPuzzleSolveType.Fail) return 0;
             return secondLastSnapshot.DisplayedScore - secondLastSnapshot.BaseScore;
         }
 
 
-        public void Notify(EPuzzleSolveType solveType)
+        public IScoreReport Notify(EPuzzleSolveType solveType)
         {
             _dirty = true;
             PuzzleScoreSnapshot curSnapshot = new PuzzleScoreSnapshot(LastSnapshot(), solveType);
             _log.Add(curSnapshot);
             OnScoreChange?.Invoke(curSnapshot);
+
+            if (solveType == EPuzzleSolveType.PuzzleWin)
+            {
+                return new ScoreReport(_log);
+            }
+            return null;
         }
 
         public void Clear()

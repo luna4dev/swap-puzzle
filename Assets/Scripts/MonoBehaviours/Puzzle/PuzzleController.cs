@@ -144,14 +144,14 @@ namespace SwapPuzzle.MonoBehaviours
 
         protected void HandleLevelComplete()
         {
-            _scoreSystem.Notify(EPuzzleSolveType.PuzzleWin);
+            IScoreReport report = _scoreSystem.Notify(EPuzzleSolveType.PuzzleWin);
 
             // finalize level data
             ILevelData currentLevel = ProgressManager.Instance.GetCurrentLevel();
             bool hasNextLevel = ProgressManager.Instance.HasNextLevel();
 
             // Notify Current level is completed
-            ProgressManager.Instance.CompleteCurrentLevel();
+            ProgressManager.Instance.CompleteCurrentLevel(report);
             if (hasNextLevel) ProgressManager.Instance.GoToNextLevel();
             StartCoroutine(LevelCompletePopup.OpenPopup(currentLevel, hasNextLevel));
         }

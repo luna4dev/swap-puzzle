@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using SwapPuzzle.Interfaces;
 
 namespace SwapPuzzle.MonoBehaviours
 {
@@ -31,13 +32,13 @@ namespace SwapPuzzle.MonoBehaviours
             }
         }
 
-        private void HandleScoreChange(PuzzleScoreSnapshot snapshot)
+        private void HandleScoreChange(IPuzzleScoreSnapshot snapshot)
         {
             UpdateComboText(snapshot);
             UpdateScoreText(snapshot);
         }
 
-        private void UpdateComboText(PuzzleScoreSnapshot snapshot)
+        private void UpdateComboText(IPuzzleScoreSnapshot snapshot)
         {
             if (snapshot.Combo > 0)
             {
@@ -49,7 +50,7 @@ namespace SwapPuzzle.MonoBehaviours
             }
         }
 
-        private void UpdateScoreText(PuzzleScoreSnapshot snapshot)
+        private void UpdateScoreText(IPuzzleScoreSnapshot snapshot)
         {
             // display score without combo multiplier
             if (snapshot.Combo > 0)

@@ -12,7 +12,7 @@ namespace SwapPuzzle.Interfaces
     {
         List<IProgressLog> ProgressLogs { get; }
         void LogProgressStart(string levelProgressionName, string levelName);
-        void LogProgressComplete(string levelProgressionName, string levelName);
+        void LogProgressComplete(string levelProgressionName, string levelName, IScoreReport scoreReport);
     }
 
     public interface IProgressLog
@@ -21,5 +21,6 @@ namespace SwapPuzzle.Interfaces
         string LevelName { get; }
         DateTime Timestamp { get; }
         EProgressLogType ProgressType { get; }
+        IScoreReport ScoreReport { get; }
     }
 }

@@ -18,20 +18,20 @@ namespace SwapPuzzle.Interfaces
         /// </summary>
         /// <returns></returns>
         void InitializeProgress(ILevelProgressionData levelProgression);
-        
+
         /// <summary>
         /// Gets the current active level data
         /// </summary>
         /// <returns>The current level data</returns>
         ILevelData GetCurrentLevel();
-        
+
         /// <summary>
         /// Marks the current level as completed and triggers progress change event
         /// </summary>
-        void CompleteCurrentLevel();
+        void CompleteCurrentLevel(IScoreReport scoreReport);
 
         bool HasNextLevel();
-        
+
         /// <summary>
         /// Advances to the next level in the progression
         /// </summary>

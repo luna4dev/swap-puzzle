@@ -18,6 +18,8 @@ namespace SwapPuzzle.MonoBehaviours
         [SerializeField] private Button NextLevelButton;
 
         [SerializeField] private Animator _animator;
+        [SerializeField] private ScoreSummary _scoreSummary;
+
         private const string BOOL_HIDDEN = "Hidden";
 
         public void OnEnable()
@@ -53,6 +55,10 @@ namespace SwapPuzzle.MonoBehaviours
             _galaryImage.InitializeImage(completedLevelData.Illustration.Illustration);
             _hasNextLevel = hasNextLevel;
             NextLevelButton.gameObject.SetActive(_hasNextLevel);
+
+            IProgressLog lastProgress = ProgressManager.Instance.GetLastCompletedProgress();
+            _scoreSummary.Initialize(completedLevelData, lastProgress.ScoreReport);
+            _scoreSummary.gameObject.SetActive(true);
         }
 
         public void InitializePopup() { }
@@ -64,10 +70,12 @@ namespace SwapPuzzle.MonoBehaviours
 
         private void OnBlurGalaryImage()
         {
+            _scoreSummary.gameObject.SetActive(false);
             SetUiHidden(false);
         }
         private void OnFocusGalaryImage()
         {
+            _scoreSummary.gameObject.SetActive(false);
             SetUiHidden(true);
         }
 
@@ -98,6 +106,19 @@ namespace SwapPuzzle.MonoBehaviours
             {
                 SceneManager.Instance.LoadScene(ESceneType.MainMenu, ETransitionType.Fade);
             });
+        }
+
+        public void OnClickSeeScore()
+        {
+            if (_scoreSummary.gameObject.activeSelf == true)
+            {
+
+                _scoreSummary.gameObject.SetActive(false);
+            }
+            else
+            {
+                _scoreSummary.gameObject.SetActive(true);
+            }
         }
 
         public void OnClickNextLevel()
