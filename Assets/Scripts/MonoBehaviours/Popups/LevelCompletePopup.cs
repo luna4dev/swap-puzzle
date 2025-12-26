@@ -14,11 +14,23 @@ namespace SwapPuzzle.MonoBehaviours
         private bool _uiHidden = false;
         private bool _hasNextLevel = true;
 
-        [SerializeField] private Image _image;
+        [SerializeField] private GalaryImage _galaryImage;
         [SerializeField] private Button NextLevelButton;
 
         [SerializeField] private Animator _animator;
         private const string BOOL_HIDDEN = "Hidden";
+
+        public void OnEnable()
+        {
+            _galaryImage.OnFocus += OnFocusGalaryImage;
+            _galaryImage.OnBlur += OnBlurGalaryImage;
+        }
+
+        public void OnDisable()
+        {
+            _galaryImage.OnFocus -= OnFocusGalaryImage;
+            _galaryImage.OnBlur -= OnBlurGalaryImage;
+        }
 
         public static IEnumerator OpenPopup(ILevelData completedLevelData, bool hasNextLevel)
         {
@@ -38,7 +50,7 @@ namespace SwapPuzzle.MonoBehaviours
 
         public void Initialize(ILevelData completedLevelData, bool hasNextLevel)
         {
-            _image.sprite = completedLevelData.Illustration.Illustration;    
+            _galaryImage.InitializeImage(completedLevelData.Illustration.Illustration);
             _hasNextLevel = hasNextLevel;
             NextLevelButton.gameObject.SetActive(_hasNextLevel);
         }
@@ -50,13 +62,12 @@ namespace SwapPuzzle.MonoBehaviours
             PopupController.Current.ClosePopup(this);
         }
 
-        public void OnClickPannel()
+        private void OnBlurGalaryImage()
         {
-            if (_uiHidden)
-            {
-                SetUiHidden(false);
-                return;
-            }
+            SetUiHidden(false);
+        }
+        private void OnFocusGalaryImage()
+        {
             SetUiHidden(true);
         }
 
@@ -94,7 +105,7 @@ namespace SwapPuzzle.MonoBehaviours
             GameController.Current.StartCoroutine(GameController.Current.StartLevel());
             ClosePopup();
         }
-    
+
         private bool CanHandleInput(InputType inputType)
         {
             switch (inputType)
@@ -117,7 +128,7 @@ namespace SwapPuzzle.MonoBehaviours
             if (CanHandleInput(inputType) == false) return false;
 
             // if ui is hidden and input is confirm
-            if (inputType == InputType.Up) 
+            if (inputType == InputType.Up)
             {
                 SetUiHidden(false);
                 return true;
@@ -148,6 +159,6 @@ namespace SwapPuzzle.MonoBehaviours
         {
 
         }
-        
+
     }
 }
