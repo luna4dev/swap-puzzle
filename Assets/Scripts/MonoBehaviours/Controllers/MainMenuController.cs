@@ -112,12 +112,14 @@ namespace SwapPuzzle.MonoBehaviours
             {
                 ConfirmPopup.OpenPopup("새로운 게임", "이전에 플레이하던 게임을 버리고 새로운 게임을 시작합니다", "네", "아니오", true, () =>
                 {
-                    SetDifficultyNavigationMode(true);
+                    // SetDifficultyNavigationMode(true);
+                    StartCoroutine(MasterGameManager.Instance.StartNewGame(EDifficulty.Easy));
                 });
                 return;
             }
 
-            SetDifficultyNavigationMode(true);
+            // SetDifficultyNavigationMode(true);
+            StartCoroutine(MasterGameManager.Instance.StartNewGame(EDifficulty.Easy));
         }
 
         public void OnContinueGameButtonPressed()
